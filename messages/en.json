@@ -1,0 +1,14 @@
+{
+    "$schema": "https://inlang.com/schema/inlang-message-format",
+    "loot": "Offering",
+    "rewards": "Rewards",
+    "clipboard": "Copied to clipboard !",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "in2d": "In 2 days",
+    "in3d": "In 3 days",
+    "in4d": "In 4 days",
+    "in5d": "In 5 days",
+    "in6d": "In 6 days",
+    "in7d": "In 7 days"
+}
