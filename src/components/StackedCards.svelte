@@ -33,11 +33,7 @@
 			})
 		);
 	}
-
-	function formatDateUTC(date: Date): string {
-		return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
-	}
-
+	
 	const copyToClipboard = async (text: string) => {
 		try {
 			if (navigator.clipboard && window.isSecureContext) {
@@ -245,97 +241,113 @@
 									{formatDate(item.date)}
 								</div>
 							{/if}
-							<div class="flex flex-1 flex-col justify-center">
+							<div class="flex flex-1 flex-col justify-center md">
 								<div
 									class="space-y-3 transition-opacity duration-200"
 									style:opacity={displayIndex === 0 ? 1 : 0}
 								>
 									{#if displayIndex === 0}
 										{#if index === 0}
-											<p class="text-center text-lg font-semibold md:text-left flex items-center">
+											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
 												{formatDate(item.date)}
 												<span
-													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
+													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
 													>{today()}</span
 												>
-												<span class="ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold bonus-label">
+												<span
+													class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold"
+												>
 													{item.bonus}
 												</span>
 											</p>
 										{:else if index === 1}
-											<p class="text-center text-lg font-semibold md:text-left flex items-center">
+											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
 												{formatDate(item.date)}
 												<span
-													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
+													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
 													>{tomorrow()}</span
 												>
-												<span class="ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold bonus-label">
+												<span
+													class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold"
+												>
 													{item.bonus}
 												</span>
 											</p>
 										{:else if index === 2}
-											<p class="text-center text-lg font-semibold md:text-left flex items-center">
+											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
 												{formatDate(item.date)}
 												<span
-													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
+													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
 													>{in2d()}</span
 												>
-												<span class="ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold bonus-label">
+												<span
+													class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold"
+												>
 													{item.bonus}
 												</span>
 											</p>
 										{:else if index === 3}
-											<p class="text-center text-lg font-semibold md:text-left flex items-center">
+											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
 												{formatDate(item.date)}
 												<span
-													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
+													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
 													>{in3d()}</span
 												>
-												<span class="ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold bonus-label">
+												<span
+													class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold"
+												>
 													{item.bonus}
 												</span>
 											</p>
 										{:else if index === 4}
-											<p class="text-center text-lg font-semibold md:text-left flex items-center">
+											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
 												{formatDate(item.date)}
 												<span
-													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
+													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
 													>{in4d()}</span
 												>
-												<span class="ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold bonus-label">
+												<span
+													class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold"
+												>
 													{item.bonus}
 												</span>
 											</p>
 										{:else if index === 5}
-											<p class="text-center text-lg font-semibold md:text-left flex items-center">
+											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
 												{formatDate(item.date)}
 												<span
-													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
+													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
 													>{in5d()}</span
 												>
-												<span class="ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold bonus-label">
+												<span
+													class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold"
+												>
 													{item.bonus}
 												</span>
 											</p>
 										{:else if index === 6}
-											<p class="text-center text-lg font-semibold md:text-left flex items-center">
+											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
 												{formatDate(item.date)}
 												<span
-													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
+													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
 													>{in6d()}</span
 												>
-												<span class="ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold bonus-label">
+												<span
+													class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold"
+												>
 													{item.bonus}
 												</span>
 											</p>
 										{:else if index === 7}
-											<p class="text-center text-lg font-semibold md:text-left flex items-center">
+											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
 												{formatDate(item.date)}
 												<span
-													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
+													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
 													>{in7d()}</span
 												>
-												<span class="ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold bonus-label">
+												<span
+													class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold"
+												>
 													{item.bonus}
 												</span>
 											</p>
@@ -361,7 +373,11 @@
 										<p>
 											{rewards()}:
 											<span class="font-semibold">{item.reward_kamas}</span>
-											<img src="/kamas.webp" alt="Kamas" class="-mb-1 md:mb-1 inline-block h-4 w-4 kamas" />
+											<img
+												src="/kamas.webp"
+												alt="Kamas"
+												class="kamas -mb-1 inline-block h-4 w-4 md:mb-1"
+											/>
 										</p>
 									</div>
 								</div>
@@ -416,7 +432,8 @@
 		.flex-col {
 			gap: 0.75rem;
 		}
-		.date-label, .bonus-label {
+		.date-label,
+		.bonus-label {
 			display: none;
 		}
 	}
