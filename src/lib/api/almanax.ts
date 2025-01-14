@@ -1,6 +1,5 @@
 import type { AlmanaxState } from '../types/AlmanaxState';
 import { sourceLanguageTag, languageTag } from '$lib/paraglide/runtime';
-import { almanaxItems } from '$lib/stores/almanaxStore';
 
 const BASE_URL = 'https://api.dofusdu.de/dofus3/v1';
 const BASE_URL_DOFUS2 = 'https://api.dofusdu.de/dofus2';
@@ -34,6 +33,5 @@ export const fetchAlmanaxData = (level: number = 200) =>
         const newItems = dofus3Data.map((d3Item: any, index: number) => 
             createAlmanaxState(d3Item, dofus2Data[index])
         );
-        almanaxItems.set(newItems); 
         return newItems;
     });

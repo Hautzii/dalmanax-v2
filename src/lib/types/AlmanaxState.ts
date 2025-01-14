@@ -7,6 +7,7 @@ export interface AlmanaxState {
     loot: string;
     quantity: number;
     reward_kamas: number;
+    reward_xp: number;
     subtype: string;
     loot_id: number;
 }
