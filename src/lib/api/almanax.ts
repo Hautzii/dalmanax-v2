@@ -6,6 +6,7 @@ const getURL = (path: string) => `${BASE_URL}/${languageTag() || sourceLanguageT
 
 const createAlmanaxState = (data: any): AlmanaxState => ({
     bonus: data.bonus.type.name,
+    bonus_id: data.bonus.type.id,
     description: data.bonus.description,
     date: new Date(data.date).toISOString().split('T')[0],
     image: data.tribute.item.image_urls.hd,
@@ -13,7 +14,7 @@ const createAlmanaxState = (data: any): AlmanaxState => ({
     quantity: data.tribute.quantity,
     reward_kamas: data.reward_kamas,
     subtype: data.subtype,
-    id: data.tribute.item.ankama_id
+    loot_id: data.tribute.item.ankama_id
 });
 
 export const fetchAlmanaxData = () =>

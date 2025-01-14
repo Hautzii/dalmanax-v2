@@ -252,7 +252,7 @@
 								>
 									{#if displayIndex === 0}
 										{#if index === 0}
-											<p>
+											<p class="text-center text-lg font-semibold md:text-left flex items-center">
 												{formatDate(item.date)}
 												<span
 													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
@@ -263,7 +263,7 @@
 												</span>
 											</p>
 										{:else if index === 1}
-											<p>
+											<p class="text-center text-lg font-semibold md:text-left flex items-center">
 												{formatDate(item.date)}
 												<span
 													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
@@ -274,7 +274,7 @@
 												</span>
 											</p>
 										{:else if index === 2}
-											<p>
+											<p class="text-center text-lg font-semibold md:text-left flex items-center">
 												{formatDate(item.date)}
 												<span
 													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
@@ -285,7 +285,7 @@
 												</span>
 											</p>
 										{:else if index === 3}
-											<p>
+											<p class="text-center text-lg font-semibold md:text-left flex items-center">
 												{formatDate(item.date)}
 												<span
 													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
@@ -296,7 +296,7 @@
 												</span>
 											</p>
 										{:else if index === 4}
-											<p>
+											<p class="text-center text-lg font-semibold md:text-left flex items-center">
 												{formatDate(item.date)}
 												<span
 													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
@@ -307,7 +307,7 @@
 												</span>
 											</p>
 										{:else if index === 5}
-											<p>
+											<p class="text-center text-lg font-semibold md:text-left flex items-center">
 												{formatDate(item.date)}
 												<span
 													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
@@ -318,7 +318,7 @@
 												</span>
 											</p>
 										{:else if index === 6}
-											<p>
+											<p class="text-center text-lg font-semibold md:text-left flex items-center">
 												{formatDate(item.date)}
 												<span
 													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
@@ -329,7 +329,7 @@
 												</span>
 											</p>
 										{:else if index === 7}
-											<p>
+											<p class="text-center text-lg font-semibold md:text-left flex items-center">
 												{formatDate(item.date)}
 												<span
 													class="ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold date-label"
@@ -361,7 +361,7 @@
 										<p>
 											{rewards()}:
 											<span class="font-semibold">{item.reward_kamas}</span>
-											<img src="/kamas.webp" alt="Kamas" class="mb-1 inline-block h-4 w-4" />
+											<img src="/kamas.webp" alt="Kamas" class="-mb-1 md:mb-1 inline-block h-4 w-4 kamas" />
 										</p>
 									</div>
 								</div>
@@ -409,8 +409,15 @@
 			width: 76px;
 			margin-top: -0.5rem;
 		}
+		.kamas {
+			height: 16px;
+			width: 16px;
+		}
 		.flex-col {
 			gap: 0.75rem;
+		}
+		.date-label, .bonus-label {
+			display: none;
 		}
 	}
 

@@ -27,14 +27,12 @@
 
 <ParaglideJS {i18n}>
 	<div class="h-screen bg-[#10100e] font-['Montserrat'] text-base overflow-hidden">
+		{#if mounted}
 		<div class="flex items-center justify-center py-4" transition:fly={{ y: 20, duration: 1000 }}>
 			<img 
 				src="/Dolmanax.webp" 
 				alt="logo" 
-				class="w-16 h-16" 
-				decoding="async"
-				loading="eager"
-				fetchpriority="high"
+				class="w-16 h-16"
 			>
 			<h1 
 				class="text-3xl font-semibold text-[#ffffe6]"
@@ -43,6 +41,7 @@
 				Dalmanax
 			</h1>
 		</div>
+		{/if}
 		{#if mounted}
 			<main class="h-[calc(100vh-theme(spacing.16))] container mx-auto px-4 overflow-hidden" transition:fly={{ y: 20, duration: 1000 }}>
 				<div class="flex h-screen flex-col text-[#ffffe6]">
