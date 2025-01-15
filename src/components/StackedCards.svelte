@@ -4,6 +4,8 @@
 	import { languageTag } from '$lib/paraglide/runtime';
 	import Toast from './Toast.svelte';
 	import { onMount } from 'svelte';
+	import { preferences } from '$lib/stores/almanaxStore';
+	import { fetchAlmanaxData } from '$lib/api/almanax';
 
 	let { items } = $props<{ items: AlmanaxState[] }>();
 	let currentIndex = $state(0);
@@ -14,15 +16,17 @@
 	let cardHeight = $state(0);
 	let windowWidth = $state(window.innerWidth);
 	let imagesLoaded = $state(new Set());
+	let userLevel = $state(0);
+	let inputLevel = $state(0);
 	const ANIMATION_DURATION = 300;
 	const TOAST_DURATION = 2000;
 	const MAX_MOBILE_HEIGHT = 400;
 
-	function capitalizeFirstLetter(str: string) {
+	const capitalizeFirstLetter = (str: string) => {
 		return str.charAt(0).toUpperCase() + str.slice(1);
 	}
 
-	function formatDate(dateStr: string) {
+	const formatDate = (dateStr: string) => {
 		const date = new Date(dateStr);
 		const lang = languageTag() || 'fr';
 		return capitalizeFirstLetter(
@@ -148,7 +152,7 @@
 		setTimeout(() => (isNavigating = false), ANIMATION_DURATION);
 	};
 
-	function getVisibleCards(index: number, currentIndex: number) {
+	const getVisibleCards = (index: number, currentIndex: number) => {
 		const normalizedCurrent = ((currentIndex % items.length) + items.length) % items.length;
 		const normalizedIndex = ((index % items.length) + items.length) % items.length;
 
@@ -161,7 +165,7 @@
 		return windowWidth <= 768 ? distance <= 2 : windowWidth >= 1600 ? distance <= 4 : distance <= 3;
 	}
 
-	function getDisplayIndex(index: number) {
+	const getDisplayIndex = (index: number) => {
 		const normalizedCurrent = ((currentIndex % items.length) + items.length) % items.length;
 		const normalizedIndex = ((index % items.length) + items.length) % items.length;
 
@@ -172,11 +176,35 @@
 		return distance;
 	}
 
+	const updateLevel = async (newLevel: number) => {
+        userLevel = newLevel;
+        $preferences.level = newLevel;
+        localStorage.setItem('level', newLevel.toString());
+        const newItems = await fetchAlmanaxData(newLevel);
+        items = newItems;
+    };
+
+	const initializeData = async () => {
+		const storedLevel = localStorage.getItem('level');
+		const initialLevel = storedLevel ? parseInt(storedLevel, 10) : $preferences.level;
+		
+		userLevel = initialLevel;
+		inputLevel = initialLevel;
+
+		const newItems = await fetchAlmanaxData(initialLevel);
+		items = newItems;
+	};
+
 	onMount(() => {
+		// Initialize data
+		initializeData();
+
+		// Setup resize listener
 		const handleResize = () => {
 			windowWidth = window.innerWidth;
 		};
 
+		// Preload images
 		items.forEach((item: any) => {
 			const img = new Image();
 			img.onload = () => {
@@ -187,12 +215,17 @@
 
 		window.addEventListener('resize', handleResize);
 
+		// Return cleanup function
 		return () => {
 			window.removeEventListener('resize', handleResize);
 		};
 	});
 </script>
-
+<div>
+	<input type="number" bind:value={inputLevel} class="text-black w-[50px]">
+	<!-- svelte-ignore event_directive_deprecated -->
+	<button on:click={() => updateLevel(inputLevel)} class="bg-white text-black mt-2 p-1">Update level</button>
+</div>
 <!-- svelte-ignore event_directive_deprecated -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -378,6 +411,7 @@
 												alt="Kamas"
 												class="kamas -mb-1 inline-block h-4 w-4 md:mb-1"
 											/>
+											<span class="font-semibold">- {item.reward_xp} XP ({userLevel})</span>
 										</p>
 									</div>
 								</div>
