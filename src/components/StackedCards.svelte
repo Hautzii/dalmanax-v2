@@ -196,15 +196,12 @@
 	};
 
 	onMount(() => {
-		// Initialize data
 		initializeData();
 
-		// Setup resize listener
 		const handleResize = () => {
 			windowWidth = window.innerWidth;
 		};
 
-		// Preload images
 		items.forEach((item: any) => {
 			const img = new Image();
 			img.onload = () => {
@@ -215,7 +212,6 @@
 
 		window.addEventListener('resize', handleResize);
 
-		// Return cleanup function
 		return () => {
 			window.removeEventListener('resize', handleResize);
 		};

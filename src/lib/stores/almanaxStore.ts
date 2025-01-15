@@ -4,7 +4,7 @@ import type { Preferences } from '$lib/types/Preferences';
 
 const defaultPreferences: Preferences = {
   language: 'fr',
-  level: 140
+  level: 150
 };
 
 if (browser) {
