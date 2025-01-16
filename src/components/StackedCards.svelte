@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { AlmanaxState } from '$lib/types/AlmanaxState';
-	import { loot, rewards, today, tomorrow, in2d, in3d, in4d, in5d, in6d, in7d } from '$lib/paraglide/messages';
+	import { loot, rewards, today, tomorrow, in2d, in3d, in4d, in5d, in6d, in7d, level } from '$lib/paraglide/messages';
 	import { languageTag } from '$lib/paraglide/runtime';
 	import { onMount } from 'svelte';
 	import Toast from './Toast.svelte';
@@ -32,6 +32,10 @@
 				day: 'numeric'
 			})
 		);
+	};
+
+	const formatNumberWithSpaces = (num: number) => {
+		return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 	};
 
 	const copyToClipboard = async (text: string) => {
@@ -386,13 +390,13 @@
 									<div class="text-center text-sm font-semibold md:text-left md:text-base">
 										<p>
 											{rewards()}:
-											<span class="font-semibold">{item.reward_kamas}</span>
+											<span class="font-semibold">{formatNumberWithSpaces(item.reward_kamas)}</span>
 											<img
 												src="/kamas.webp"
 												alt="Kamas"
 												class="kamas -mb-1 inline-block h-4 w-4 md:mb-1"
 											/>
-											<span class="font-semibold">- {item.reward_xp} XP ({userLevel})</span>
+											<span class="font-semibold">/ {formatNumberWithSpaces(item.reward_xp)} XP ({level()} {userLevel})</span>
 										</p>
 									</div>
 								</div>
