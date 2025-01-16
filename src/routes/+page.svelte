@@ -1,16 +1,19 @@
-<script lang="ts">
+	<script lang="ts">
 	import StackedCards from '../components/StackedCards.svelte';
+	import Settings from '../components/Settings.svelte';
 	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 	import { i18n } from '$lib/i18n';
 	import { ParaglideJS } from '@inlang/paraglide-sveltekit';
 	import { fly } from 'svelte/transition';
 	import '../app.postcss';
 	import type { AlmanaxState } from '$lib/types/AlmanaxState';
 
-	export let data: { items: AlmanaxState[] };
-	let items = data.items;
-	let mounted = false;
-
+	const { data } = $props<{ data: { items: AlmanaxState[] } }>();
+	let items = $state(data.items);
+	let mounted = $state(false);
+	let userLevel = $state(browser ? (localStorage.getItem('level') ? parseInt(localStorage.getItem('level')!) : 0) : 0);
+	
 	onMount(() => {
 		mounted = true;
 	});
@@ -40,13 +43,21 @@
 			>
 				Dalmanax
 			</h1>
+			<Settings 
+				{items} 
+				initialLevel={userLevel}
+				onLevelUpdate={(newItems, level) => { 
+					items = newItems;
+					userLevel = level;
+				}} 
+			/>
 		</div>
 		{/if}
 		{#if mounted}
 			<main class="h-[calc(100vh-theme(spacing.16))] container mx-auto px-4 overflow-hidden" transition:fly={{ y: 20, duration: 1000 }}>
 				<div class="flex h-screen flex-col text-[#ffffe6]">
 					<div class="flex flex-1 items-center justify-center">
-						<StackedCards {items} />
+						<StackedCards {items} {userLevel} />
 					</div>
 				</div>
 			</main>

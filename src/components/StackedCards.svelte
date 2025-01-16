@@ -1,24 +1,13 @@
 <script lang="ts">
 	import type { AlmanaxState } from '$lib/types/AlmanaxState';
-	import {
-		loot,
-		rewards,
-		today,
-		tomorrow,
-		in2d,
-		in3d,
-		in4d,
-		in5d,
-		in6d,
-		in7d
-	} from '$lib/paraglide/messages';
+	import { loot, rewards, today, tomorrow, in2d, in3d, in4d, in5d, in6d, in7d } from '$lib/paraglide/messages';
 	import { languageTag } from '$lib/paraglide/runtime';
 	import { onMount } from 'svelte';
 	import { preferences } from '$lib/stores/almanaxStore';
 	import { fetchAlmanaxData } from '$lib/api/almanax';
 	import Toast from './Toast.svelte';
 
-	let { items } = $props<{ items: AlmanaxState[] }>();
+	let { items, userLevel } = $props<{ items: AlmanaxState[], userLevel: number }>();
 	let currentIndex = $state(0);
 	let touchStartY = 0;
 	let touchProcessed = false;
@@ -27,7 +16,6 @@
 	let cardHeight = $state(0);
 	let windowWidth = $state(window.innerWidth);
 	let imagesLoaded = $state(new Set());
-	let userLevel = $state(0);
 	let inputLevel = $state(0);
 	const ANIMATION_DURATION = 300;
 	const TOAST_DURATION = 2000;
@@ -185,19 +173,10 @@
 		return distance;
 	};
 
-	const updateLevel = async (newLevel: number) => {
-		userLevel = newLevel;
-		$preferences.level = newLevel;
-		localStorage.setItem('level', newLevel.toString());
-		const newItems = await fetchAlmanaxData(newLevel);
-		items = newItems;
-	};
-
 	const initializeData = async () => {
 		const storedLevel = localStorage.getItem('level');
 		const initialLevel = storedLevel ? parseInt(storedLevel, 10) : $preferences.level;
 
-		userLevel = initialLevel;
 		inputLevel = initialLevel;
 
 		const newItems = await fetchAlmanaxData(initialLevel);
@@ -227,13 +206,6 @@
 	});
 </script>
 
-<div class="flex flex-col items-center">
-	<input type="number" min="1" max="200" bind:value={inputLevel} class="w-[50px] text-black rounded-md" />
-	<!-- svelte-ignore event_directive_deprecated -->
-	<button on:click={() => updateLevel(inputLevel)} class="mt-2 bg-white p-1 text-black rounded-md"
-		>Update level</button
-	>
-</div>
 <!-- svelte-ignore event_directive_deprecated -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
