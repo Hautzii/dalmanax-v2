@@ -16,6 +16,7 @@
 
     const updateLevel = async (newLevel: number) => {
         userLevel = newLevel;
+        inputLevel = newLevel;
         $preferences.level = newLevel;
         if (browser) {
             localStorage.setItem('level', newLevel.toString());
@@ -24,7 +25,7 @@
         onLevelUpdate(newItems, newLevel);
     };
 
-    onMount(() => {
+    onMount(async () => {
         if (browser) {
             const storedLevel = localStorage.getItem('level');
             if (storedLevel) {
@@ -32,13 +33,15 @@
                 inputLevel = parseInt(storedLevel);
             }
         }
+        const newItems = await fetchAlmanaxData(userLevel);
+        onLevelUpdate(newItems, userLevel);
     });
 </script>
 
 <div>
     <!-- svelte-ignore event_directive_deprecated -->
     <button on:click={() => showModal = true} class="settings-button">
-        <img src="/settings.svg" alt="Settings" class="w-6 h-6">
+        <img src="/settings.svg" alt="Settings" class="w-6 h-6 settings-icon">
     </button>
 
     {#if showModal}
@@ -72,5 +75,13 @@
         padding: 20px;
         border-radius: 5px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .settings-icon {
+        transition: transform 0.5s ease-in-out;
+        transform:rotate(0deg)
+    }
+    .settings-icon:hover {
+        transition: transform 0.5s ease-in-out;
+        transform:rotate(360deg)
     }
 </style>

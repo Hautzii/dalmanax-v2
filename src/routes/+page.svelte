@@ -12,9 +12,15 @@
 	const { data } = $props<{ data: { items: AlmanaxState[] } }>();
 	let items = $state(data.items);
 	let mounted = $state(false);
-	let userLevel = $state(browser ? (localStorage.getItem('level') ? parseInt(localStorage.getItem('level')!) : 0) : 0);
-	
+	let userLevel = $state(0);
+
 	onMount(() => {
+		if (browser) {
+			const storedLevel = localStorage.getItem('level');
+			if (storedLevel) {
+				userLevel = parseInt(storedLevel);
+			}
+		}
 		mounted = true;
 	});
 </script>
@@ -43,14 +49,9 @@
 			>
 				Dalmanax
 			</h1>
-			<Settings 
-				{items} 
-				initialLevel={userLevel}
-				onLevelUpdate={(newItems, level) => { 
-					items = newItems;
-					userLevel = level;
-				}} 
-			/>
+			<div class="mt-2.5 ml-2.5">
+				<Settings {items} initialLevel={userLevel} onLevelUpdate={(newItems, level) => { items = newItems; userLevel = level; }}/>
+			</div>
 		</div>
 		{/if}
 		{#if mounted}
