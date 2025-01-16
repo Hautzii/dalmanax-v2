@@ -1,11 +1,22 @@
 <script lang="ts">
 	import type { AlmanaxState } from '$lib/types/AlmanaxState';
-	import { loot, rewards, today, tomorrow, in2d, in3d, in4d, in5d, in6d, in7d } from '$lib/paraglide/messages';
+	import {
+		loot,
+		rewards,
+		today,
+		tomorrow,
+		in2d,
+		in3d,
+		in4d,
+		in5d,
+		in6d,
+		in7d
+	} from '$lib/paraglide/messages';
 	import { languageTag } from '$lib/paraglide/runtime';
-	import Toast from './Toast.svelte';
 	import { onMount } from 'svelte';
 	import { preferences } from '$lib/stores/almanaxStore';
 	import { fetchAlmanaxData } from '$lib/api/almanax';
+	import Toast from './Toast.svelte';
 
 	let { items } = $props<{ items: AlmanaxState[] }>();
 	let currentIndex = $state(0);
@@ -24,7 +35,7 @@
 
 	const capitalizeFirstLetter = (str: string) => {
 		return str.charAt(0).toUpperCase() + str.slice(1);
-	}
+	};
 
 	const formatDate = (dateStr: string) => {
 		const date = new Date(dateStr);
@@ -36,8 +47,8 @@
 				day: 'numeric'
 			})
 		);
-	}
-	
+	};
+
 	const copyToClipboard = async (text: string) => {
 		try {
 			if (navigator.clipboard && window.isSecureContext) {
@@ -112,10 +123,8 @@
 		if (Math.abs(deltaY) > 50) {
 			touchProcessed = true;
 			if (deltaY > 0) {
-				// Swipe down - go to next
 				currentIndex = (currentIndex + 1) % items.length;
 			} else {
-				// Swipe up - go to previous
 				currentIndex = (currentIndex - 1 + items.length) % items.length;
 			}
 		}
@@ -163,7 +172,7 @@
 		);
 
 		return windowWidth <= 768 ? distance <= 2 : windowWidth >= 1600 ? distance <= 4 : distance <= 3;
-	}
+	};
 
 	const getDisplayIndex = (index: number) => {
 		const normalizedCurrent = ((currentIndex % items.length) + items.length) % items.length;
@@ -174,20 +183,20 @@
 		if (distance < -items.length / 2) distance += items.length;
 
 		return distance;
-	}
+	};
 
 	const updateLevel = async (newLevel: number) => {
-        userLevel = newLevel;
-        $preferences.level = newLevel;
-        localStorage.setItem('level', newLevel.toString());
-        const newItems = await fetchAlmanaxData(newLevel);
-        items = newItems;
-    };
+		userLevel = newLevel;
+		$preferences.level = newLevel;
+		localStorage.setItem('level', newLevel.toString());
+		const newItems = await fetchAlmanaxData(newLevel);
+		items = newItems;
+	};
 
 	const initializeData = async () => {
 		const storedLevel = localStorage.getItem('level');
 		const initialLevel = storedLevel ? parseInt(storedLevel, 10) : $preferences.level;
-		
+
 		userLevel = initialLevel;
 		inputLevel = initialLevel;
 
@@ -217,10 +226,13 @@
 		};
 	});
 </script>
-<div>
-	<input type="number" bind:value={inputLevel} class="text-black w-[50px]">
+
+<div class="flex flex-col items-center">
+	<input type="number" min="1" max="200" bind:value={inputLevel} class="w-[50px] text-black rounded-md" />
 	<!-- svelte-ignore event_directive_deprecated -->
-	<button on:click={() => updateLevel(inputLevel)} class="bg-white text-black mt-2 p-1">Update level</button>
+	<button on:click={() => updateLevel(inputLevel)} class="mt-2 bg-white p-1 text-black rounded-md"
+		>Update level</button
+	>
 </div>
 <!-- svelte-ignore event_directive_deprecated -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -244,7 +256,7 @@
 					: ''} touch-none select-none transition-all duration-500"
 				style="
         			transform: translateY({-displayIndex *
-					(windowWidth <= 768 ? 60 : windowWidth <= 1300 ? 65 : windowWidth <= 1600 ? 70 : 80)}px) 
+					(windowWidth <= 768 ? 60 : windowWidth <= 1300 ? 65 : windowWidth <= 1600 ? 70 : 80)}px)
 					scale({1 - Math.abs(displayIndex) * 0.05});
         			opacity: {1 - Math.abs(displayIndex) * 0.15};
         			z-index: {998 - Math.abs(displayIndex)};
@@ -270,14 +282,16 @@
 									{formatDate(item.date)}
 								</div>
 							{/if}
-							<div class="flex flex-1 flex-col justify-center md">
+							<div class="md flex flex-1 flex-col justify-center">
 								<div
 									class="space-y-3 transition-opacity duration-200"
 									style:opacity={displayIndex === 0 ? 1 : 0}
 								>
 									{#if displayIndex === 0}
 										{#if index === 0}
-											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
+											<p
+												class="text-center text-lg font-semibold md:flex md:items-center md:text-left"
+											>
 												{formatDate(item.date)}
 												<span
 													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
@@ -290,7 +304,9 @@
 												</span>
 											</p>
 										{:else if index === 1}
-											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
+											<p
+												class="text-center text-lg font-semibold md:flex md:items-center md:text-left"
+											>
 												{formatDate(item.date)}
 												<span
 													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
@@ -303,7 +319,9 @@
 												</span>
 											</p>
 										{:else if index === 2}
-											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
+											<p
+												class="text-center text-lg font-semibold md:flex md:items-center md:text-left"
+											>
 												{formatDate(item.date)}
 												<span
 													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
@@ -316,7 +334,9 @@
 												</span>
 											</p>
 										{:else if index === 3}
-											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
+											<p
+												class="text-center text-lg font-semibold md:flex md:items-center md:text-left"
+											>
 												{formatDate(item.date)}
 												<span
 													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
@@ -329,7 +349,9 @@
 												</span>
 											</p>
 										{:else if index === 4}
-											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
+											<p
+												class="text-center text-lg font-semibold md:flex md:items-center md:text-left"
+											>
 												{formatDate(item.date)}
 												<span
 													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
@@ -342,7 +364,9 @@
 												</span>
 											</p>
 										{:else if index === 5}
-											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
+											<p
+												class="text-center text-lg font-semibold md:flex md:items-center md:text-left"
+											>
 												{formatDate(item.date)}
 												<span
 													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
@@ -355,7 +379,9 @@
 												</span>
 											</p>
 										{:else if index === 6}
-											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
+											<p
+												class="text-center text-lg font-semibold md:flex md:items-center md:text-left"
+											>
 												{formatDate(item.date)}
 												<span
 													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
@@ -368,7 +394,9 @@
 												</span>
 											</p>
 										{:else if index === 7}
-											<p class="md:flex md:items-center text-center text-lg font-semibold md:text-left">
+											<p
+												class="text-center text-lg font-semibold md:flex md:items-center md:text-left"
+											>
 												{formatDate(item.date)}
 												<span
 													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
@@ -433,11 +461,6 @@
 {/if}
 
 <style>
-	@media screen and (min-width: 768px) and (max-width: 1300px) {
-		.description {
-			max-width: 550px;
-		}
-	}
 	@media screen and (max-width: 768px) {
 		.cards-container {
 			height: 275px;
@@ -471,6 +494,9 @@
 	@media screen and (min-width: 768px) and (max-width: 1300px) {
 		.cards-container {
 			height: 250px;
+		}
+		.description {
+			max-width: 550px;
 		}
 	}
 
