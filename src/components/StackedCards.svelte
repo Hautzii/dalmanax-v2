@@ -3,8 +3,6 @@
 	import { loot, rewards, today, tomorrow, in2d, in3d, in4d, in5d, in6d, in7d } from '$lib/paraglide/messages';
 	import { languageTag } from '$lib/paraglide/runtime';
 	import { onMount } from 'svelte';
-	import { preferences } from '$lib/stores/almanaxStore';
-	import { fetchAlmanaxData } from '$lib/api/almanax';
 	import Toast from './Toast.svelte';
 
 	let { items, userLevel } = $props<{ items: AlmanaxState[], userLevel: number }>();
@@ -16,7 +14,6 @@
 	let cardHeight = $state(0);
 	let windowWidth = $state(window.innerWidth);
 	let imagesLoaded = $state(new Set());
-	let inputLevel = $state(0);
 	const ANIMATION_DURATION = 300;
 	const TOAST_DURATION = 2000;
 	const MAX_MOBILE_HEIGHT = 400;
@@ -173,19 +170,7 @@
 		return distance;
 	};
 
-	const initializeData = async () => {
-		const storedLevel = localStorage.getItem('level');
-		const initialLevel = storedLevel ? parseInt(storedLevel, 10) : $preferences.level;
-
-		inputLevel = initialLevel;
-
-		const newItems = await fetchAlmanaxData(initialLevel);
-		items = newItems;
-	};
-
 	onMount(() => {
-		initializeData();
-
 		const handleResize = () => {
 			windowWidth = window.innerWidth;
 		};

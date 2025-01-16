@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import { fade } from 'svelte/transition';
     import { browser } from '$app/environment';
     import { preferences } from '$lib/stores/almanaxStore';
     import { fetchAlmanaxData } from '$lib/api/almanax';
@@ -41,7 +42,7 @@
     </button>
 
     {#if showModal}
-        <div class="modal z-[1500]">
+        <div class="modal z-[1500]" transition:fade={{ duration: 200 }}>
             <div class="modal-content">
                 <label for="level" class="text-[#ffffe6]">Level:</label>
                 <input type="number" id="level" min="1" max="200" bind:value={inputLevel} class="w-[50px] text-black rounded-md" />
