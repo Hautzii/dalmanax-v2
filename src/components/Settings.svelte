@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import { fade } from 'svelte/transition';
     import { browser } from '$app/environment';
-    import { level, settings, language, protected_account } from '$lib/paraglide/messages';
+    import { level, settings, language, protected_account, close } from '$lib/paraglide/messages';
     import { setLanguageTag, languageTag } from '$lib/paraglide/runtime';
     import { preferences } from '$lib/stores/almanaxStore';
     import { fetchAlmanaxData } from '$lib/api/almanax';
@@ -54,7 +54,7 @@
             throw new Error('Invalid language selection');
         }
         let newItems = await fetchAlmanaxData(newLevel, inputLanguage);
-        newItems = applyXPBoost(newItems);  // Apply XP boost after fetching
+        newItems = applyXPBoost(newItems);
         onLevelUpdate(newItems, newLevel);
     };
     
@@ -63,23 +63,16 @@
         if (!validLanguages.includes(newLanguage)) {
             throw new Error("Invalid language");
         }
-        
-        // Update Paraglide language
         setLanguageTag(newLanguage);
         inputLanguage = newLanguage;
-        
-        // Update preferences and localStorage
         updatePreferences({ level: userLevel, language: newLanguage, isAccountProtected });
-        
-        // Fetch new data with updated language and apply XP boost
         let newItems = await fetchAlmanaxData(userLevel, newLanguage);
-        newItems = applyXPBoost(newItems);  // Apply XP boost after fetching
+        newItems = applyXPBoost(newItems);
         onLevelUpdate(newItems, userLevel);
     };
     
     onMount(async () => {
         if (browser) {
-            // Set default level to 150 if no stored level exists
             const storedLevel = localStorage.getItem('level');
             if (storedLevel) {
                 userLevel = parseInt(storedLevel);
@@ -90,11 +83,9 @@
                 localStorage.setItem('level', '150');
             }
             
-            // Handle language initialization
             const storedLanguage = localStorage.getItem('selectedLanguage');
             const currentLanguage = languageTag();
             
-            // Determine which language to use
             let targetLanguage: "en" | "fr" | "es" | "de";
             if (storedLanguage === 'en' || storedLanguage === 'fr' || storedLanguage === 'es' || storedLanguage === 'de') {
                 targetLanguage = storedLanguage;
@@ -104,11 +95,9 @@
                 targetLanguage = 'fr';
             }
             
-            // Set initial language and update UI
             setLanguageTag(targetLanguage);
             inputLanguage = targetLanguage;
             
-            // Initialize isAccountProtected from localStorage
             const storedIsAccountProtected = localStorage.getItem('isAccountProtected');
             if (storedIsAccountProtected) {
                 isAccountProtected = storedIsAccountProtected === 'true';
@@ -116,9 +105,8 @@
             
             updatePreferences({ level: userLevel, language: targetLanguage, isAccountProtected });
             
-            // Fetch initial data and apply XP boost
             let newItems = await fetchAlmanaxData(userLevel, targetLanguage);
-            newItems = applyXPBoost(newItems);  // Apply XP boost after fetching
+            newItems = applyXPBoost(newItems);
             onLevelUpdate(newItems, userLevel);
         }
     });
@@ -155,8 +143,12 @@
                     <input type="checkbox" id="isAccountProtected" bind:checked={isAccountProtected} class="w-[20px] h-[20px] text-black rounded-md" />
                 </div>
                 <div class="flex gap-2">
-                    <button on:click={() => { updateLevel(inputLevel); updateLanguage(inputLanguage); showModal = false; }} class="mt-2 bg-white p-1 text-black rounded-md">Update</button>
-                    <button on:click={() => showModal = false} class="mt-2 bg-red-500 p-1 text-white rounded-md">Close</button>
+                    <button on:click={async () => { 
+                        await updateLevel(inputLevel); 
+                        await updateLanguage(inputLanguage); 
+                        showModal = false; 
+                    }} class="mt-2 bg-white p-1 text-black rounded-md">OK</button>
+                    <button on:click={() => showModal = false} class="mt-2 bg-red-500 p-1 text-white rounded-md">{close()}</button>
                 </div>
             </div>
         </div>

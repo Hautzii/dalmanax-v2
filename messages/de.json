@@ -14,5 +14,6 @@
     "level": "Stufe",
     "settings": "Einstellungen",
     "language": "Sprache",
-    "protected_account": "Konto geschlossen"
+    "protected_account": "Konto geschlossen",
+    "close": "Schliessen"
 }

@@ -14,5 +14,6 @@
     "level": "Nivel",
     "settings": "Ajustes",
     "language": "Idioma",
-    "protected_account": "Cuenta protegida"
+    "protected_account": "Cuenta protegida",
+    "close": "Cerrar"
 }
