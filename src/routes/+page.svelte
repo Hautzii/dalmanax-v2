@@ -13,6 +13,7 @@
 	let items = $state(data.items);
 	let mounted = $state(false);
 	let userLevel = $state(0);
+	let isAccountProtected = $state(true);
 
 	onMount(() => {
 		if (browser) {
@@ -50,7 +51,7 @@
 				Dalmanax
 			</h1>
 			<div class="mt-2.5 ml-2.5">
-				<Settings {items} initialLevel={userLevel} onLevelUpdate={(newItems, level) => { items = newItems; userLevel = level; }}/>
+				<Settings {items} initialLevel={userLevel} onLevelUpdate={(newItems, level) => { items = newItems; userLevel = level; }} isAccountProtected={isAccountProtected} />
 			</div>
 		</div>
 		{/if}
@@ -58,7 +59,7 @@
 			<main class="h-[calc(100vh-theme(spacing.16))] container mx-auto px-4 overflow-hidden" transition:fly={{ y: 20, duration: 1000 }}>
 				<div class="flex h-screen flex-col text-[#ffffe6]">
 					<div class="flex flex-1 items-center justify-center">
-						<StackedCards {items} {userLevel} />
+						<StackedCards {items} userLevel={userLevel} isAccountProtected={isAccountProtected} />
 					</div>
 				</div>
 			</main>

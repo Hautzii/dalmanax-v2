@@ -25,13 +25,13 @@ const createAlmanaxState = (dofus3Data: Dofus3Data, dofus2Data: Dofus2Data): Alm
     loot_id: dofus3Data.tribute.item.ankama_id
   });
 
-export const fetchAlmanaxData = async (level: number): Promise<AlmanaxState[]> => {
+export const fetchAlmanaxData = async (level: number, language: string): Promise<AlmanaxState[]> => {
     const [dofus3Data, dofus2Data] = await Promise.all([
-      fetch(getURL(`/almanax?${RANGE_QUERY}&level=${level}`)).then(res => res.json()),
-      fetch(getDofus2URL(`/almanax?${RANGE_QUERY}`)).then(res => res.json())
+      fetch(getURL(`/almanax?${RANGE_QUERY}&level=${level}&language=${language}`)).then(res => res.json()),
+      fetch(getDofus2URL(`/almanax?${RANGE_QUERY}&language=${language}`)).then(res => res.json())
     ]);
   
     return dofus3Data.map((d3Item: Dofus3Data, index: number) =>
       createAlmanaxState(d3Item, dofus2Data[index])
     );
-  };
+};

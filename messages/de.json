@@ -11,5 +11,8 @@
     "in5d": "In 5 Tage",
     "in6d": "In 6 Tage",
     "in7d": "In 7 Tage",
-    "level": "Level"
+    "level": "Stufe",
+    "settings": "Einstellungen",
+    "language": "Sprache",
+    "protected_account": "Konto geschlossen"
 }

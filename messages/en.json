@@ -11,5 +11,8 @@
     "in5d": "In 5 days",
     "in6d": "In 6 days",
     "in7d": "In 7 days",
-    "level": "Level"
+    "level": "Level",
+    "settings": "Settings",
+    "language": "Language",
+    "protected_account": "Protected Account"
 }
