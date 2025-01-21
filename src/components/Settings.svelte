@@ -9,7 +9,7 @@
     import type { AlmanaxState } from '$lib/types/AlmanaxState';
     import type { Preferences } from '$lib/types/Preferences';
     
-    let { onLevelUpdate, initialLevel = 150, initialLanguage = 'fr', isAccountProtected = true } = $props<{ 
+    let { onLevelUpdate, initialLevel = 150, initialLanguage = 'fr', isAccountProtected: initialProtected = true } = $props<{ 
         items: AlmanaxState[], 
         onLevelUpdate: (items: AlmanaxState[], level: number) => void,
         initialLevel: number,
@@ -21,6 +21,7 @@
     let inputLevel = $state(initialLevel);
     let showModal = $state(false);
     let inputLanguage = $state<"en" | "fr" | "es" | "de">(initialLanguage as "fr");
+    let isAccountProtected = $state(initialProtected);
     
     const updatePreferences = async (updates: Preferences) => {
         preferences.update(current => {
@@ -31,7 +32,8 @@
             return updatedPreferences;
         });
         const newItems = await fetchAlmanaxData(userLevel, inputLanguage);
-        onLevelUpdate(newItems, userLevel);
+        const boostedItems = applyXPBoost(newItems);
+        onLevelUpdate(boostedItems, userLevel);
     };
     
     const applyXPBoost = (items: AlmanaxState[]) => {
@@ -49,13 +51,10 @@
         inputLevel = newLevel;
         const validLanguages = ["en", "fr", "es", "de"] as const;
         if (validLanguages.includes(inputLanguage)) {
-            updatePreferences({ level: newLevel, language: inputLanguage, isAccountProtected });
+            await updatePreferences({ level: newLevel, language: inputLanguage, isAccountProtected });
         } else {
             throw new Error('Invalid language selection');
         }
-        let newItems = await fetchAlmanaxData(newLevel, inputLanguage);
-        newItems = applyXPBoost(newItems);
-        onLevelUpdate(newItems, newLevel);
     };
     
     const updateLanguage = async (newLanguage: "en" | "fr" | "es" | "de") => {
@@ -65,10 +64,12 @@
         }
         setLanguageTag(newLanguage);
         inputLanguage = newLanguage;
-        updatePreferences({ level: userLevel, language: newLanguage, isAccountProtected });
-        let newItems = await fetchAlmanaxData(userLevel, newLanguage);
-        newItems = applyXPBoost(newItems);
-        onLevelUpdate(newItems, userLevel);
+        await updatePreferences({ level: userLevel, language: newLanguage, isAccountProtected });
+    };
+
+    const updateProtectedStatus = async (protected_status: boolean) => {
+        isAccountProtected = protected_status;
+        await updatePreferences({ level: userLevel, language: inputLanguage, isAccountProtected: protected_status });
     };
     
     onMount(async () => {
@@ -99,18 +100,12 @@
             inputLanguage = targetLanguage;
             
             const storedIsAccountProtected = localStorage.getItem('isAccountProtected');
-            if (storedIsAccountProtected) {
-                isAccountProtected = storedIsAccountProtected === 'true';
-            }
+            isAccountProtected = storedIsAccountProtected ? storedIsAccountProtected === 'true' : initialProtected;
             
-            updatePreferences({ level: userLevel, language: targetLanguage, isAccountProtected });
-            
-            let newItems = await fetchAlmanaxData(userLevel, targetLanguage);
-            newItems = applyXPBoost(newItems);
-            onLevelUpdate(newItems, userLevel);
+            await updatePreferences({ level: userLevel, language: targetLanguage, isAccountProtected });
         }
     });
-    </script>
+</script>
 
 <div>
     <!-- svelte-ignore event_directive_deprecated -->
@@ -122,7 +117,7 @@
         <!-- svelte-ignore a11y_click_events_have_key_events -->
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <!-- svelte-ignore event_directive_deprecated -->
-        <div class="modal z-[1500]" transition:fade={{ duration: 200 }} on:click={() => showModal = false}>
+        <div class="modal z-[1500]" transition:fade={{ duration: 200 }} on:click|stopPropagation>
             <div class="modal-content flex flex-col items-center" on:click|stopPropagation>
                 <h2 class="text-2xl font-semibold text-center pb-2 text-[#ffffe6]">{settings()}</h2>
                 <div class="flex gap-2">
@@ -133,14 +128,20 @@
                     <label for="language" class="text-[#ffffe6]">{language()}:</label>
                     <select id="language" bind:value={inputLanguage} class="w-[100px] text-black rounded-md">
                         <option value="en">English</option>
-                        <option value="fr">Français</option>
+                        <option value="fr">Français</option>
                         <option value="es">Español</option>
                         <option value="de">Deutsch</option>
                     </select>
                 </div>
                 <div class="flex gap-2 pt-2">
                     <label for="isAccountProtected" class="text-[#ffffe6]">{protected_account()}:</label>
-                    <input type="checkbox" id="isAccountProtected" bind:checked={isAccountProtected} class="w-[20px] h-[20px] text-black rounded-md" />
+                    <input 
+                        type="checkbox" 
+                        id="isAccountProtected" 
+                        bind:checked={isAccountProtected} 
+                        on:change={() => updateProtectedStatus(isAccountProtected)}
+                        class="w-[20px] h-[20px] text-black rounded-md" 
+                    />
                 </div>
                 <div class="flex gap-2">
                     <button on:click={async () => { 

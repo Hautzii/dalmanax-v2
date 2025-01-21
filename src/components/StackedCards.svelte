@@ -287,10 +287,10 @@
 							{#if displayIndex !== 0}
 								<div class="text-center text-lg font-semibold transition-opacity duration-200 md:text-left" style:opacity={displayIndex !== 0 ? 1 : 0}>
 									<p style="display: inline; margin-right: 8px;">{formatDate(item.date)}</p>
-									<span class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold">
+									<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 										{dateLabels[index]}
 									</span>
-									<span class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold">
+									<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 										{item.bonus}
 									</span>
 								</div>
@@ -304,10 +304,10 @@
 										{#if index === 0}
 											<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
 												{formatDate(item.date)}
-												<span class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold">
+												<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 													{dateLabels[index]}
 												</span>
-												<span class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold">
+												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 													{item.bonus}
 												</span>
 											</p>
@@ -317,69 +317,69 @@
 											>
 												{formatDate(item.date)}
 												<span
-													class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold"
+													class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold"
 													>{dateLabels[index]}</span>												
-												<span class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold">
+												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 													{item.bonus}
 												</span>
 											</p>
 										{:else if index === 2}
 											<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
 												{formatDate(item.date)}
-												<span class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold">
+												<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 													{dateLabels[index]}
 												</span>
-												<span class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold">
+												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 													{item.bonus}
 												</span>
 											</p>
 										{:else if index === 3}
 											<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
 												{formatDate(item.date)}
-												<span class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold">
+												<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 													{dateLabels[index]}
 												</span>
-												<span class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold">
+												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 													{item.bonus}
 												</span>
 											</p>
 										{:else if index === 4}
 											<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
 												{formatDate(item.date)}
-												<span class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold">
+												<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 													{dateLabels[index]}
 												</span>
-												<span class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold">
+												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 													{item.bonus}
 												</span>
 											</p>
 										{:else if index === 5}
 											<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
 												{formatDate(item.date)}
-												<span class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold">
+												<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 													{dateLabels[index]}
 												</span>
-												<span class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold">
+												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 													{item.bonus}
 												</span>
 											</p>
 										{:else if index === 6}
 											<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
 												{formatDate(item.date)}
-												<span class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold">
+												<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 													{dateLabels[index]}
 												</span>
-												<span class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold">
+												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 													{item.bonus}
 												</span>
 											</p>
 										{:else if index === 7}
 											<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
 												{formatDate(item.date)}
-												<span class="date-label ml-2 rounded-xl bg-[#f15a22] px-2 py-1 text-xs font-semibold">
+												<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 													{dateLabels[index]}
 												</span>
-												<span class="bonus-label ml-2 rounded-xl bg-[#acb739] px-2 py-1 text-xs font-semibold">
+												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
 													{item.bonus}
 												</span>
 											</p>
@@ -400,6 +400,7 @@
 										>
 											{item.loot}
 										</button>
+										<!-- TODO: add mats for equipment inside modal -->
 									</div>
 									<div class="text-center text-sm font-semibold md:text-left md:text-base">
 										<p>
@@ -432,6 +433,12 @@
 {/if}
 
 <style>
+	.date-label {
+		background-color: #f15a22;
+	}
+	.bonus-label {
+		background-color: #acb739;
+	}
 	@media screen and (max-width: 768px) {
 		.cards-container {
 			height: 275px;
