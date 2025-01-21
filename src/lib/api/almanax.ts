@@ -2,11 +2,11 @@ import type { AlmanaxState } from '$lib/types/AlmanaxState';
 import type { Dofus2Data, Dofus3Data } from '$lib/types/AlmanaxDataTypes';
 import { sourceLanguageTag, languageTag } from '$lib/paraglide/runtime';
 
-const BASE_URL = 'https://api.dofusdu.de/dofus3/v1';
+const BASE_URL_DOFUS3 = 'https://api.dofusdu.de/dofus3/v1';
 const BASE_URL_DOFUS2 = 'https://api.dofusdu.de/dofus2';
 const RANGE_QUERY = 'range%5Bsize%5D=7';
 
-const getURL = (path: string) => `${BASE_URL}/${languageTag() || sourceLanguageTag}${path}`;
+const getDofus3URL = (path: string) => `${BASE_URL_DOFUS3}/${languageTag() || sourceLanguageTag}${path}`;
 const getDofus2URL = (path: string) => `${BASE_URL_DOFUS2}/${languageTag() || sourceLanguageTag}${path}`;
 
 const createAlmanaxState = (dofus3Data: Dofus3Data, dofus2Data: Dofus2Data): AlmanaxState => ({
@@ -27,7 +27,7 @@ const createAlmanaxState = (dofus3Data: Dofus3Data, dofus2Data: Dofus2Data): Alm
 
 export const fetchAlmanaxData = async (level: number, language: string): Promise<AlmanaxState[]> => {
     const [dofus3Data, dofus2Data] = await Promise.all([
-      fetch(getURL(`/almanax?${RANGE_QUERY}&level=${level}&language=${language}`)).then(res => res.json()),
+      fetch(getDofus3URL(`/almanax?${RANGE_QUERY}&level=${level}&language=${language}`)).then(res => res.json()),
       fetch(getDofus2URL(`/almanax?${RANGE_QUERY}&language=${language}`)).then(res => res.json())
     ]);
   

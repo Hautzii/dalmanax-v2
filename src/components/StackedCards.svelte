@@ -5,7 +5,8 @@
 	import { onMount } from 'svelte';
 	import Toast from './Toast.svelte';
 
-	let { items }: { items: AlmanaxState[] } = $props<{ items: AlmanaxState[], userLevel: number, isAccountProtected: boolean }>();	let currentIndex = $state(0);
+	let { items }: { items: AlmanaxState[] } = $props<{ items: AlmanaxState[], userLevel: number, isAccountProtected: boolean }>();	
+	let currentIndex = $state(0);
 	let touchStartY = 0;
 	let touchProcessed = false;
 	let isNavigating = false;
@@ -18,116 +19,76 @@
 	const TOAST_DURATION = 2000;
 	const MAX_MOBILE_HEIGHT = 400;
 
-	let translatedItems: { 
-    loot_text: string; 
-    rewards_text: string; 
-    description: string; 
-    bonus: string; 
-    bonus_id: string; 
-    date: string; 
-    image: string; 
-    loot: string; 
-    quantity: number; 
-    reward_kamas: number; 
-    reward_xp: number; 
-    subtype: string; 
-    loot_id: number; 
-}[] = $state([]);
+	type TranslatedItem = AlmanaxState & { loot_text: string; rewards_text: string };
+	let translatedItems: TranslatedItem[] = $state([]);
 
-	$effect(() => {
-    translatedItems = items.map((item: AlmanaxState) => ({
-        ...item,
-        loot_text: loot(),
-        rewards_text: rewards(),
-    }));
-});
+	// Helper function to capitalize the first letter of a string
+	const capitalizeFirstLetter = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
 
-	const capitalizeFirstLetter = (str: string) => {
-		return str.charAt(0).toUpperCase() + str.slice(1);
-	};
-
-	const formatDate = (dateStr: string) => {
+	// Format date based on the current language
+	const formatDate = (dateStr: string): string => {
 		const date = new Date(dateStr);
 		const lang = languageTag() || 'fr';
 		return capitalizeFirstLetter(
-			date.toLocaleDateString(lang, {
-				weekday: 'long',
-				month: 'long',
-				day: 'numeric'
-			})
+			date.toLocaleDateString(lang, { weekday: 'long', month: 'long', day: 'numeric' })
 		);
 	};
 
-	const formatNumberWithSpaces = (num: number) => {
-		return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-	};
+	// Format numbers with spaces for readability
+	const formatNumberWithSpaces = (num: number): string => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
-	const copyToClipboard = async (text: string) => {
+	// Copy text to clipboard and show toast
+	const copyToClipboard = async (text: string): Promise<void> => {
 		try {
-			if (navigator.clipboard && window.isSecureContext) {
+			if (navigator.clipboard?.writeText) {
 				await navigator.clipboard.writeText(text);
 			} else {
-				const textArea = document.createElement('textarea');
-				textArea.value = text;
-				textArea.style.position = 'fixed';
-				textArea.style.left = '-999999px';
-				textArea.style.top = '-999999px';
-				document.body.appendChild(textArea);
-				textArea.focus();
+				const textArea = Object.assign(document.createElement('textarea'), { value: text });
+				document.body.append(textArea);
 				textArea.select();
-				try {
-					document.execCommand('copy');
-				} finally {
-					textArea.remove();
-				}
+				document.execCommand('copy');
+				textArea.remove();
 			}
 			showToast = true;
-			setTimeout(() => {
-				showToast = false;
-			}, TOAST_DURATION);
+			setTimeout(() => (showToast = false), TOAST_DURATION);
 		} catch (error) {
 			console.error('Failed to copy text:', error);
 		}
 	};
 
-	const isMobileDevice = () => windowWidth <= 768;
+	// Check if the device is mobile
+	const isMobileDevice = (): boolean => windowWidth <= 768;
 
-	const getMobileOffset = (height: number) => {
-		if (windowWidth <= 768) {
-			const offset = Math.max(0, (MAX_MOBILE_HEIGHT - height) / 2);
-			return offset;
-		}
-		if (windowWidth >= 700 && windowWidth <= 1300) {
-			return 32;
-		}
-		if (windowWidth > 1300) {
-			return 64;
-		}
+	// Calculate mobile offset based on window width
+	const getMobileOffset = (height: number): number => {
+		if (windowWidth <= 768) return Math.max(0, (MAX_MOBILE_HEIGHT - height) / 2);
+		if (windowWidth >= 700 && windowWidth <= 1300) return 32;
+		if (windowWidth > 1300) return 64;
 		return 96;
 	};
 
-	const handleClick = (e: MouseEvent | TouchEvent, index: number) => {
+	// Handle click events for navigation
+	const handleClick = (e: MouseEvent | TouchEvent, index: number): void => {
 		if (isNavigating) return;
 		const displayIndex = getDisplayIndex(index);
 
 		if (displayIndex !== 0) {
 			isNavigating = true;
 			currentIndex = index;
-			setTimeout(() => {
-				isNavigating = false;
-			}, ANIMATION_DURATION);
+			setTimeout(() => (isNavigating = false), ANIMATION_DURATION);
 		}
 	};
 
-	const handleTouchStart = (e: TouchEvent) => {
+	// Handle touch start events
+	const handleTouchStart = (e: TouchEvent): void => {
 		e.preventDefault();
 		touchStartY = e.touches[0].clientY;
 		touchProcessed = false;
 	};
 
-	const handleTouchMove = (e: TouchEvent) => {
-		if (!isMobileDevice()) return;
-		if (isNavigating || touchProcessed) return;
+	// Handle touch move events for swipe navigation
+	const handleTouchMove = (e: TouchEvent): void => {
+		if (!isMobileDevice() || isNavigating || touchProcessed) return;
 		e.preventDefault();
 
 		const touchEndY = e.touches[0].clientY;
@@ -135,15 +96,14 @@
 
 		if (Math.abs(deltaY) > 50) {
 			touchProcessed = true;
-			if (deltaY > 0) {
-				currentIndex = (currentIndex + 1) % items.length;
-			} else {
-				currentIndex = (currentIndex - 1 + items.length) % items.length;
-			}
+			currentIndex = deltaY > 0 
+				? (currentIndex + 1) % items.length 
+				: (currentIndex - 1 + items.length) % items.length;
 		}
 	};
 
-	const handleTouchEnd = (e: TouchEvent) => {
+	// Handle touch end events
+	const handleTouchEnd = (e: TouchEvent): void => {
 		if (!touchProcessed && !isNavigating) {
 			const touch = e.changedTouches[0];
 			const element = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement;
@@ -151,30 +111,26 @@
 
 			if (cardElement) {
 				const indexAttr = cardElement.getAttribute('data-index');
-				if (indexAttr) {
-					handleClick(e, parseInt(indexAttr));
-				}
+				if (indexAttr) handleClick(e, parseInt(indexAttr));
 			}
 		}
 		touchProcessed = false;
 	};
 
-	const handleWheel = (e: WheelEvent) => {
-		if (isMobileDevice()) return;
-		if (Math.abs(e.deltaY) < 25 || isNavigating) return;
+	// Handle wheel events for desktop navigation
+	const handleWheel = (e: WheelEvent): void => {
+		if (isMobileDevice() || Math.abs(e.deltaY) < 25 || isNavigating) return;
 		isNavigating = true;
 
-		if (e.deltaY < 0) {
-			if (currentIndex < items.length - 1) currentIndex++;
-			else currentIndex = 0;
-		} else {
-			if (currentIndex > 0) currentIndex--;
-			else currentIndex = items.length - 1;
-		}
+		currentIndex = e.deltaY < 0 
+			? (currentIndex < items.length - 1 ? currentIndex + 1 : 0) 
+			: (currentIndex > 0 ? currentIndex - 1 : items.length - 1);
+
 		setTimeout(() => (isNavigating = false), ANIMATION_DURATION);
 	};
 
-	const getVisibleCards = (index: number, currentIndex: number) => {
+	// Check if a card is visible based on its index
+	const getVisibleCards = (index: number, currentIndex: number): boolean => {
 		const normalizedCurrent = ((currentIndex % items.length) + items.length) % items.length;
 		const normalizedIndex = ((index % items.length) + items.length) % items.length;
 
@@ -187,7 +143,8 @@
 		return windowWidth <= 768 ? distance <= 2 : windowWidth >= 1600 ? distance <= 4 : distance <= 3;
 	};
 
-	const getDisplayIndex = (index: number) => {
+	// Get the display index for card positioning
+	const getDisplayIndex = (index: number): number => {
 		const normalizedCurrent = ((currentIndex % items.length) + items.length) % items.length;
 		const normalizedIndex = ((index % items.length) + items.length) % items.length;
 
@@ -198,49 +155,38 @@
 		return distance;
 	};
 
-	const getDateLabel = (index: number) => {
-		switch (index) {
-			case 0:
-				return today();
-			case 1:
-				return tomorrow();
-			case 2:
-				return in2d();
-			case 3:
-				return in3d();
-			case 4:
-				return in4d();
-			case 5:
-				return in5d();
-			case 6:
-				return in6d();
-			case 7:
-				return in7d();
-		}
-	}
+	// Get the date label based on the index
+	const getDateLabel = (index: number): string => {
+		const labels = [today(), tomorrow(), in2d(), in3d(), in4d(), in5d(), in6d(), in7d()];
+		return labels[index] || '';
+	};
 
+	// Effect to update translated items
 	$effect(() => {
-    	dateLabels = items.map((_, index) => getDateLabel(index)).filter((label): label is string => label !== undefined);
+		translatedItems = items.map((item: AlmanaxState) => ({
+			...item,
+			loot_text: loot(),
+			rewards_text: rewards(),
+		}));
 	});
 
-	onMount(() => {
-		const handleResize = () => {
-			windowWidth = window.innerWidth;
-		};
+	// Effect to update date labels
+	$effect(() => {
+		dateLabels = items.map((_, index) => getDateLabel(index)).filter((label): label is string => label !== undefined);
+	});
 
-		items.forEach((item: any) => {
+	// On mount, set up event listeners and preload images
+	onMount(() => {
+		const handleResize = () => (windowWidth = window.innerWidth);
+		window.addEventListener('resize', handleResize);
+
+		items.forEach((item: AlmanaxState) => {
 			const img = new Image();
-			img.onload = () => {
-				imagesLoaded.add(item.image);
-			};
+			img.onload = () => imagesLoaded.add(item.image);
 			img.src = item.image;
 		});
 
-		window.addEventListener('resize', handleResize);
-
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
+		return () => window.removeEventListener('resize', handleResize);
 	});
 </script>
 
@@ -300,91 +246,17 @@
 									class="space-y-3 transition-opacity duration-200"
 									style:opacity={displayIndex === 0 ? 1 : 0}
 								>
-									{#if displayIndex === 0}
-										{#if index === 0}
-											<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
-												{formatDate(item.date)}
-												<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
-													{dateLabels[index]}
-												</span>
-												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
-													{item.bonus}
-												</span>
-											</p>
-										{:else if index === 1}
-											<p
-												class="text-center text-lg font-semibold md:flex md:items-center md:text-left"
-											>
-												{formatDate(item.date)}
-												<span
-													class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold"
-													>{dateLabels[index]}</span>												
-												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
-													{item.bonus}
-												</span>
-											</p>
-										{:else if index === 2}
-											<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
-												{formatDate(item.date)}
-												<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
-													{dateLabels[index]}
-												</span>
-												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
-													{item.bonus}
-												</span>
-											</p>
-										{:else if index === 3}
-											<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
-												{formatDate(item.date)}
-												<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
-													{dateLabels[index]}
-												</span>
-												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
-													{item.bonus}
-												</span>
-											</p>
-										{:else if index === 4}
-											<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
-												{formatDate(item.date)}
-												<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
-													{dateLabels[index]}
-												</span>
-												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
-													{item.bonus}
-												</span>
-											</p>
-										{:else if index === 5}
-											<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
-												{formatDate(item.date)}
-												<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
-													{dateLabels[index]}
-												</span>
-												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
-													{item.bonus}
-												</span>
-											</p>
-										{:else if index === 6}
-											<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
-												{formatDate(item.date)}
-												<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
-													{dateLabels[index]}
-												</span>
-												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
-													{item.bonus}
-												</span>
-											</p>
-										{:else if index === 7}
-											<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
-												{formatDate(item.date)}
-												<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
-													{dateLabels[index]}
-												</span>
-												<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
-													{item.bonus}
-												</span>
-											</p>
-										{/if}
-									{/if}
+								{#if displayIndex === 0}
+									<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
+										{formatDate(item.date)}
+										<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
+											{dateLabels[index]}
+										</span>
+										<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
+											{item.bonus}
+										</span>
+									</p>
+								{/if}
 									<p
 										class="description line-clamp-6 text-center text-sm font-semibold transition-opacity duration-200 md:text-left md:text-base"
 										style:opacity={displayIndex === 0 ? 1 : 0}

@@ -8,101 +8,93 @@
     import { fetchAlmanaxData } from '$lib/api/almanax';
     import type { AlmanaxState } from '$lib/types/AlmanaxState';
     import type { Preferences } from '$lib/types/Preferences';
-    
+
+    type Language = "en" | "fr" | "es" | "de";
+
     let { onLevelUpdate, initialLevel = 150, initialLanguage = 'fr', isAccountProtected: initialProtected = true } = $props<{ 
         items: AlmanaxState[], 
         onLevelUpdate: (items: AlmanaxState[], level: number) => void,
         initialLevel: number,
-        initialLanguage?: string,
+        initialLanguage?: Language,
         isAccountProtected?: boolean
     }>();
-    
+
     let userLevel = $state(initialLevel);
     let inputLevel = $state(initialLevel);
     let showModal = $state(false);
-    let inputLanguage = $state<"en" | "fr" | "es" | "de">(initialLanguage as "fr");
+    let inputLanguage = $state<Language>(initialLanguage);
     let isAccountProtected = $state(initialProtected);
-    
-    const updatePreferences = async (updates: Preferences) => {
-        preferences.update(current => {
-            const updatedPreferences = { ...current, ...updates };
-            localStorage.setItem('level', updatedPreferences.level.toString());
-            localStorage.setItem('selectedLanguage', updatedPreferences.language);
-            localStorage.setItem('isAccountProtected', updatedPreferences.isAccountProtected.toString());
-            return updatedPreferences;
-        });
-        const newItems = await fetchAlmanaxData(userLevel, inputLanguage);
-        const boostedItems = applyXPBoost(newItems);
-        onLevelUpdate(boostedItems, userLevel);
-    };
-    
-    const applyXPBoost = (items: AlmanaxState[]) => {
-        if (isAccountProtected) {
-            return items.map(item => ({
-                ...item,
-                reward_xp: Math.round(item.reward_xp * 1.05)
-            }));
+
+    const VALID_LANGUAGES: Language[] = ["en", "fr", "es", "de"];
+
+    // Helper function to validate and set language
+    const validateAndSetLanguage = (lang: string): Language => {
+        if (VALID_LANGUAGES.includes(lang as Language)) {
+            return lang as Language;
         }
-        return items;
+        return 'fr'; // Default to French if invalid
     };
-    
+
+    // Helper function to save preferences to localStorage
+    const savePreferences = (prefs: Preferences) => {
+        localStorage.setItem('level', prefs.level.toString());
+        localStorage.setItem('selectedLanguage', prefs.language);
+        localStorage.setItem('isAccountProtected', prefs.isAccountProtected.toString());
+    };
+
+    // Update preferences and fetch new data
+    const updatePreferences = async (updates: Partial<Preferences>) => {
+        const newPreferences = { level: userLevel, language: inputLanguage, isAccountProtected, ...updates };
+        savePreferences(newPreferences);
+        preferences.set(newPreferences);
+
+        const newItems = await fetchAlmanaxData(newPreferences.level, newPreferences.language);
+        const boostedItems = applyXPBoost(newItems);
+        onLevelUpdate(boostedItems, newPreferences.level);
+    };
+
+    // Apply XP boost if account is protected
+    const applyXPBoost = (items: AlmanaxState[]): AlmanaxState[] => {
+        return items.map(item => ({
+            ...item,
+            reward_xp: isAccountProtected ? Math.round(item.reward_xp * 1.05) : item.reward_xp
+        }));
+    };
+
+    // Update user level and preferences
     const updateLevel = async (newLevel: number) => {
         userLevel = newLevel;
         inputLevel = newLevel;
-        const validLanguages = ["en", "fr", "es", "de"] as const;
-        if (validLanguages.includes(inputLanguage)) {
-            await updatePreferences({ level: newLevel, language: inputLanguage, isAccountProtected });
-        } else {
-            throw new Error('Invalid language selection');
-        }
-    };
-    
-    const updateLanguage = async (newLanguage: "en" | "fr" | "es" | "de") => {
-        const validLanguages = ["en", "fr", "es", "de"] as const;
-        if (!validLanguages.includes(newLanguage)) {
-            throw new Error("Invalid language");
-        }
-        setLanguageTag(newLanguage);
-        inputLanguage = newLanguage;
-        await updatePreferences({ level: userLevel, language: newLanguage, isAccountProtected });
+        await updatePreferences({ level: newLevel });
     };
 
-    const updateProtectedStatus = async (protected_status: boolean) => {
-        isAccountProtected = protected_status;
-        await updatePreferences({ level: userLevel, language: inputLanguage, isAccountProtected: protected_status });
+    // Update language and preferences
+    const updateLanguage = async (newLanguage: Language) => {
+        setLanguageTag(newLanguage);
+        inputLanguage = newLanguage;
+        await updatePreferences({ language: newLanguage });
     };
-    
+
+    // Update account protection status and preferences
+    const updateProtectedStatus = async (protectedStatus: boolean) => {
+        isAccountProtected = protectedStatus;
+        await updatePreferences({ isAccountProtected: protectedStatus });
+    };
+
+    // Initialize preferences on mount
     onMount(async () => {
         if (browser) {
-            const storedLevel = localStorage.getItem('level');
-            if (storedLevel) {
-                userLevel = parseInt(storedLevel);
-                inputLevel = parseInt(storedLevel);
-            } else {
-                userLevel = 150;
-                inputLevel = 150;
-                localStorage.setItem('level', '150');
-            }
-            
-            const storedLanguage = localStorage.getItem('selectedLanguage');
-            const currentLanguage = languageTag();
-            
-            let targetLanguage: "en" | "fr" | "es" | "de";
-            if (storedLanguage === 'en' || storedLanguage === 'fr' || storedLanguage === 'es' || storedLanguage === 'de') {
-                targetLanguage = storedLanguage;
-            } else if (currentLanguage === 'en' || currentLanguage === 'fr' || currentLanguage === 'es' || currentLanguage === 'de') {
-                targetLanguage = currentLanguage;
-            } else {
-                targetLanguage = 'fr';
-            }
-            
-            setLanguageTag(targetLanguage);
-            inputLanguage = targetLanguage;
-            
-            const storedIsAccountProtected = localStorage.getItem('isAccountProtected');
-            isAccountProtected = storedIsAccountProtected ? storedIsAccountProtected === 'true' : initialProtected;
-            
-            await updatePreferences({ level: userLevel, language: targetLanguage, isAccountProtected });
+            const storedLevel = parseInt(localStorage.getItem('level') || '150');
+            const storedLanguage = validateAndSetLanguage(localStorage.getItem('selectedLanguage') || languageTag() || 'fr');
+            const storedIsAccountProtected = localStorage.getItem('isAccountProtected') === 'true';
+
+            userLevel = storedLevel;
+            inputLevel = storedLevel;
+            inputLanguage = storedLanguage;
+            isAccountProtected = storedIsAccountProtected;
+
+            setLanguageTag(storedLanguage);
+            await updatePreferences({ level: storedLevel, language: storedLanguage, isAccountProtected: storedIsAccountProtected });
         }
     });
 </script>
@@ -127,10 +119,9 @@
                 <div class="flex gap-2 pt-2">
                     <label for="language" class="text-[#ffffe6]">{language()}:</label>
                     <select id="language" bind:value={inputLanguage} class="w-[100px] text-black rounded-md">
-                        <option value="en">English</option>
-                        <option value="fr">Français</option>
-                        <option value="es">Español</option>
-                        <option value="de">Deutsch</option>
+                        {#each VALID_LANGUAGES as lang}
+                            <option value={lang}>{lang.toUpperCase()}</option>
+                        {/each}
                     </select>
                 </div>
                 <div class="flex gap-2 pt-2">
