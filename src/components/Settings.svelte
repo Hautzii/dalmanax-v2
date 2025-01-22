@@ -125,7 +125,7 @@
                     </div>
                     <div class="flex flex-col gap-2">
                         <label for="language" class="text-white text-center">{language()}:</label>
-                        <select id="language" bind:value={inputLanguage} class="w-full p-2 text-black rounded-md text-center">
+                        <select id="language" bind:value={inputLanguage} class="w-full p-2 text-black rounded-md text-center pl-[1.15rem]">
                             {#each VALID_LANGUAGES as lang}
                                 <option value={lang}>{formatLanguage(lang)}</option>
                             {/each}
