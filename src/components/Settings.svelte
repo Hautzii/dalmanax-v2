@@ -189,9 +189,10 @@
         -webkit-appearance: none;
         margin: 0;
     }
-
-    /* Firefox */
     input[type=number] {
-        -moz-appearance: textfield;
+        appearance: none; /* Standard property */
+        -webkit-appearance: none; /* Safari */
+        -moz-appearance: none; /* Firefox */
+        -ms-appearance: none; /* Internet Explorer */
     }
 </style>
