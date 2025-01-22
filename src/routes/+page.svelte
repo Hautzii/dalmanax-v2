@@ -8,6 +8,7 @@
 	import { fly } from 'svelte/transition';
 	import '../app.postcss';
 	import type { AlmanaxState } from '$lib/types/AlmanaxState';
+	import { initAnalytics } from '$lib/analytics';
 
 	const { data } = $props<{ data: { items: AlmanaxState[] } }>();
 	let items = $state(data.items);
@@ -22,6 +23,7 @@
 				userLevel = parseInt(storedLevel);
 			}
 		}
+		initAnalytics();
 		mounted = true;
 	});
 </script>
