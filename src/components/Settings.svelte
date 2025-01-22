@@ -34,6 +34,21 @@
         return 'fr';
     };
 
+    const formatLanguage = (lang: Language): string => {
+        switch (lang) {
+            case 'en':
+                return 'English';
+            case 'fr':
+                return 'Français';
+            case 'es':
+                return 'Español';
+            case 'de':
+                return 'Deutsch';
+            default:
+                return 'Français';
+        }
+    };
+
     const savePreferences = (prefs: Preferences) => {
         localStorage.setItem('level', prefs.level.toString());
         localStorage.setItem('selectedLanguage', prefs.language);
@@ -75,19 +90,19 @@
     };
 
     onMount(async () => {
-    if (browser) {
-        const storedLevel = parseInt(localStorage.getItem('level') || '150');
-        const storedLanguage = validateAndSetLanguage(localStorage.getItem('selectedLanguage') || languageTag() || 'fr');
-        const storedIsAccountProtected = localStorage.getItem('isAccountProtected') !== null ? localStorage.getItem('isAccountProtected') === 'true' : true;
-        userLevel = storedLevel;
-        inputLevel = storedLevel;
-        inputLanguage = storedLanguage;
-        isAccountProtected = storedIsAccountProtected;
+        if (browser) {
+            const storedLevel = parseInt(localStorage.getItem('level') || '150');
+            const storedLanguage = validateAndSetLanguage(localStorage.getItem('selectedLanguage') || languageTag() || 'fr');
+            const storedIsAccountProtected = localStorage.getItem('isAccountProtected') !== null ? localStorage.getItem('isAccountProtected') === 'true' : true;
+            userLevel = storedLevel;
+            inputLevel = storedLevel;
+            inputLanguage = storedLanguage;
+            isAccountProtected = storedIsAccountProtected;
 
-        setLanguageTag(storedLanguage);
-        await updatePreferences({ level: storedLevel, language: storedLanguage, isAccountProtected: storedIsAccountProtected });
-    }
-});
+            setLanguageTag(storedLanguage);
+            await updatePreferences({ level: storedLevel, language: storedLanguage, isAccountProtected: storedIsAccountProtected });
+        }
+    });
 </script>
 
 <div>
@@ -102,36 +117,38 @@
         <!-- svelte-ignore event_directive_deprecated -->
         <div class="modal z-[1500]" transition:fade={{ duration: 200 }} on:click|stopPropagation>
             <div class="modal-content flex flex-col items-center" on:click|stopPropagation>
-                <h2 class="text-2xl font-semibold text-center pb-2 text-[#ffffe6]">{settings()}</h2>
-                <div class="flex gap-2">
-                    <label for="level" class="text-[#ffffe6]">{level()}:</label>
-                    <input type="number" id="level" min="1" max="200" bind:value={inputLevel} class="w-[50px] text-black rounded-md" />    
+                <h2 class="text-2xl font-semibold text-center pb-4 text-white">{settings()}</h2>
+                <div class="w-full max-w-xs space-y-4">
+                    <div class="flex flex-col gap-2">
+                        <label for="level" class="text-white text-center">{level()}:</label>
+                        <input type="number" id="level" min="1" max="200" bind:value={inputLevel} class="w-full p-2 text-black rounded-md text-center -ml-[0.325rem]" />    
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label for="language" class="text-white text-center">{language()}:</label>
+                        <select id="language" bind:value={inputLanguage} class="w-full p-2 text-black rounded-md text-center">
+                            {#each VALID_LANGUAGES as lang}
+                                <option value={lang}>{formatLanguage(lang)}</option>
+                            {/each}
+                        </select>
+                    </div>
+                    <div class="flex items-center justify-center gap-2">
+                        <label for="isAccountProtected" class="text-white">{protected_account()}</label>
+                        <input 
+                            type="checkbox" 
+                            id="isAccountProtected" 
+                            bind:checked={isAccountProtected} 
+                            on:change={() => updateProtectedStatus(isAccountProtected)}
+                            class="w-5 h-5 text-black rounded-md" 
+                        />
+                    </div>
                 </div>
-                <div class="flex gap-2 pt-2">
-                    <label for="language" class="text-[#ffffe6]">{language()}:</label>
-                    <select id="language" bind:value={inputLanguage} class="w-[100px] text-black rounded-md">
-                        {#each VALID_LANGUAGES as lang}
-                            <option value={lang}>{lang.toUpperCase()}</option>
-                        {/each}
-                    </select>
-                </div>
-                <div class="flex gap-2 pt-2">
-                    <label for="isAccountProtected" class="text-[#ffffe6]">{protected_account()}:</label>
-                    <input 
-                        type="checkbox" 
-                        id="isAccountProtected" 
-                        bind:checked={isAccountProtected} 
-                        on:change={() => updateProtectedStatus(isAccountProtected)}
-                        class="w-[20px] h-[20px] text-black rounded-md" 
-                    />
-                </div>
-                <div class="flex gap-2">
+                <div class="flex gap-4 mt-6">
                     <button on:click={async () => { 
                         await updateLevel(inputLevel); 
                         await updateLanguage(inputLanguage); 
                         showModal = false; 
-                    }} class="mt-2 bg-white p-1 text-black rounded-md">OK</button>
-                    <button on:click={() => showModal = false} class="mt-2 bg-red-500 p-1 text-white rounded-md">{close()}</button>
+                    }} class="px-4 py-2 bg-white text-black rounded-md hover:bg-gray-100 transition-colors">OK</button>
+                    <button on:click={() => showModal = false} class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors">{close()}</button>
                 </div>
             </div>
         </div>
@@ -152,9 +169,11 @@
     }
     .modal-content {
         background: #1e1e1e;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 24px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        width: 90%;
+        max-width: 400px;
     }
     .settings-icon {
         transition: transform 0.5s ease-in-out;
@@ -163,5 +182,16 @@
     .settings-icon:hover {
         transition: transform 0.5s ease-in-out;
         transform:rotate(360deg)
+    }
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
     }
 </style>
