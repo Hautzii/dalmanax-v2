@@ -15,17 +15,12 @@
 	let windowWidth = $state(window.innerWidth);
 	let imagesLoaded = $state(new Set());
 	let dateLabels: string[] = $state([]);
-	const ANIMATION_DURATION = 300;
-	const TOAST_DURATION = 2000;
-	const MAX_MOBILE_HEIGHT = 400;
 
 	type TranslatedItem = AlmanaxState & { loot_text: string; rewards_text: string };
 	let translatedItems: TranslatedItem[] = $state([]);
 
-	// Helper function to capitalize the first letter of a string
 	const capitalizeFirstLetter = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
 
-	// Format date based on the current language
 	const formatDate = (dateStr: string): string => {
 		const date = new Date(dateStr);
 		const lang = languageTag() || 'fr';
@@ -34,10 +29,8 @@
 		);
 	};
 
-	// Format numbers with spaces for readability
 	const formatNumberWithSpaces = (num: number): string => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
-	// Copy text to clipboard and show toast
 	const copyToClipboard = async (text: string): Promise<void> => {
 		try {
 			if (navigator.clipboard?.writeText) {
@@ -50,24 +43,21 @@
 				textArea.remove();
 			}
 			showToast = true;
-			setTimeout(() => (showToast = false), TOAST_DURATION);
+			setTimeout(() => (showToast = false), 2000);
 		} catch (error) {
 			console.error('Failed to copy text:', error);
 		}
 	};
 
-	// Check if the device is mobile
 	const isMobileDevice = (): boolean => windowWidth <= 768;
 
-	// Calculate mobile offset based on window width
 	const getMobileOffset = (height: number): number => {
-		if (windowWidth <= 768) return Math.max(0, (MAX_MOBILE_HEIGHT - height) / 2);
+		if (windowWidth <= 768) return Math.max(0, (400 - height) / 2);
 		if (windowWidth >= 700 && windowWidth <= 1300) return 32;
 		if (windowWidth > 1300) return 64;
 		return 96;
 	};
 
-	// Handle click events for navigation
 	const handleClick = (e: MouseEvent | TouchEvent, index: number): void => {
 		if (isNavigating) return;
 		const displayIndex = getDisplayIndex(index);
@@ -75,7 +65,7 @@
 		if (displayIndex !== 0) {
 			isNavigating = true;
 			currentIndex = index;
-			setTimeout(() => (isNavigating = false), ANIMATION_DURATION);
+			setTimeout(() => (isNavigating = false), 300);
 		}
 	};
 
@@ -86,7 +76,6 @@
 		touchProcessed = false;
 	};
 
-	// Handle touch move events for swipe navigation
 	const handleTouchMove = (e: TouchEvent): void => {
 		if (!isMobileDevice() || isNavigating || touchProcessed) return;
 		e.preventDefault();
@@ -102,7 +91,6 @@
 		}
 	};
 
-	// Handle touch end events
 	const handleTouchEnd = (e: TouchEvent): void => {
 		if (!touchProcessed && !isNavigating) {
 			const touch = e.changedTouches[0];
@@ -117,7 +105,6 @@
 		touchProcessed = false;
 	};
 
-	// Handle wheel events for desktop navigation
 	const handleWheel = (e: WheelEvent): void => {
 		if (isMobileDevice() || Math.abs(e.deltaY) < 25 || isNavigating) return;
 		isNavigating = true;
@@ -126,10 +113,9 @@
 			? (currentIndex < items.length - 1 ? currentIndex + 1 : 0) 
 			: (currentIndex > 0 ? currentIndex - 1 : items.length - 1);
 
-		setTimeout(() => (isNavigating = false), ANIMATION_DURATION);
+		setTimeout(() => (isNavigating = false), 300);
 	};
 
-	// Check if a card is visible based on its index
 	const getVisibleCards = (index: number, currentIndex: number): boolean => {
 		const normalizedCurrent = ((currentIndex % items.length) + items.length) % items.length;
 		const normalizedIndex = ((index % items.length) + items.length) % items.length;
@@ -143,7 +129,6 @@
 		return windowWidth <= 768 ? distance <= 2 : windowWidth >= 1600 ? distance <= 4 : distance <= 3;
 	};
 
-	// Get the display index for card positioning
 	const getDisplayIndex = (index: number): number => {
 		const normalizedCurrent = ((currentIndex % items.length) + items.length) % items.length;
 		const normalizedIndex = ((index % items.length) + items.length) % items.length;
@@ -155,13 +140,11 @@
 		return distance;
 	};
 
-	// Get the date label based on the index
 	const getDateLabel = (index: number): string => {
 		const labels = [today(), tomorrow(), in2d(), in3d(), in4d(), in5d(), in6d(), in7d()];
 		return labels[index] || '';
 	};
 
-	// Effect to update translated items
 	$effect(() => {
 		translatedItems = items.map((item: AlmanaxState) => ({
 			...item,
@@ -170,12 +153,10 @@
 		}));
 	});
 
-	// Effect to update date labels
 	$effect(() => {
 		dateLabels = items.map((_, index) => getDateLabel(index)).filter((label): label is string => label !== undefined);
 	});
 
-	// On mount, set up event listeners and preload images
 	onMount(() => {
 		const handleResize = () => (windowWidth = window.innerWidth);
 		window.addEventListener('resize', handleResize);
@@ -272,7 +253,6 @@
 										>
 											{item.loot}
 										</button>
-										<!-- TODO: add mats for equipment inside modal -->
 									</div>
 									<div class="text-center text-sm font-semibold md:text-left md:text-base">
 										<p>

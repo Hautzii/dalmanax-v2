@@ -27,22 +27,19 @@
 
     const VALID_LANGUAGES: Language[] = ["en", "fr", "es", "de"];
 
-    // Helper function to validate and set language
     const validateAndSetLanguage = (lang: string): Language => {
         if (VALID_LANGUAGES.includes(lang as Language)) {
             return lang as Language;
         }
-        return 'fr'; // Default to French if invalid
+        return 'fr';
     };
 
-    // Helper function to save preferences to localStorage
     const savePreferences = (prefs: Preferences) => {
         localStorage.setItem('level', prefs.level.toString());
         localStorage.setItem('selectedLanguage', prefs.language);
         localStorage.setItem('isAccountProtected', prefs.isAccountProtected.toString());
     };
 
-    // Update preferences and fetch new data
     const updatePreferences = async (updates: Partial<Preferences>) => {
         const newPreferences = { level: userLevel, language: inputLanguage, isAccountProtected, ...updates };
         savePreferences(newPreferences);
@@ -53,7 +50,6 @@
         onLevelUpdate(boostedItems, newPreferences.level);
     };
 
-    // Apply XP boost if account is protected
     const applyXPBoost = (items: AlmanaxState[]): AlmanaxState[] => {
         return items.map(item => ({
             ...item,
@@ -61,42 +57,37 @@
         }));
     };
 
-    // Update user level and preferences
     const updateLevel = async (newLevel: number) => {
         userLevel = newLevel;
         inputLevel = newLevel;
         await updatePreferences({ level: newLevel });
     };
 
-    // Update language and preferences
     const updateLanguage = async (newLanguage: Language) => {
         setLanguageTag(newLanguage);
         inputLanguage = newLanguage;
         await updatePreferences({ language: newLanguage });
     };
 
-    // Update account protection status and preferences
     const updateProtectedStatus = async (protectedStatus: boolean) => {
         isAccountProtected = protectedStatus;
         await updatePreferences({ isAccountProtected: protectedStatus });
     };
 
-    // Initialize preferences on mount
     onMount(async () => {
-        if (browser) {
-            const storedLevel = parseInt(localStorage.getItem('level') || '150');
-            const storedLanguage = validateAndSetLanguage(localStorage.getItem('selectedLanguage') || languageTag() || 'fr');
-            const storedIsAccountProtected = localStorage.getItem('isAccountProtected') === 'true';
+    if (browser) {
+        const storedLevel = parseInt(localStorage.getItem('level') || '150');
+        const storedLanguage = validateAndSetLanguage(localStorage.getItem('selectedLanguage') || languageTag() || 'fr');
+        const storedIsAccountProtected = localStorage.getItem('isAccountProtected') !== null ? localStorage.getItem('isAccountProtected') === 'true' : true;
+        userLevel = storedLevel;
+        inputLevel = storedLevel;
+        inputLanguage = storedLanguage;
+        isAccountProtected = storedIsAccountProtected;
 
-            userLevel = storedLevel;
-            inputLevel = storedLevel;
-            inputLanguage = storedLanguage;
-            isAccountProtected = storedIsAccountProtected;
-
-            setLanguageTag(storedLanguage);
-            await updatePreferences({ level: storedLevel, language: storedLanguage, isAccountProtected: storedIsAccountProtected });
-        }
-    });
+        setLanguageTag(storedLanguage);
+        await updatePreferences({ level: storedLevel, language: storedLanguage, isAccountProtected: storedIsAccountProtected });
+    }
+});
 </script>
 
 <div>
