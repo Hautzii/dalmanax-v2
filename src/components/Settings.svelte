@@ -121,7 +121,7 @@
                 <div class="w-full max-w-xs space-y-4">
                     <div class="flex flex-col gap-2">
                         <label for="level" class="text-white text-center">{level()}:</label>
-                        <input type="number" id="level" min="1" max="200" bind:value={inputLevel} class="w-full p-2 text-black rounded-md text-center -ml-[0.325rem]" />    
+                        <input type="number" id="level" min="1" max="200" bind:value={inputLevel} class="w-full p-2 text-black rounded-md text-center" />    
                     </div>
                     <div class="flex flex-col gap-2">
                         <label for="language" class="text-white text-center">{language()}:</label>
@@ -191,6 +191,7 @@
     input[type=number] {
         appearance: none;
         -webkit-appearance: none;
-        -moz-appearance: none;
+        -moz-appearance: textfield;
+        text-align: center;
     }
 </style>
