@@ -183,16 +183,14 @@
         transition: transform 0.5s ease-in-out;
         transform:rotate(360deg)
     }
-    /* Chrome, Safari, Edge, Opera */
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
     }
     input[type=number] {
-        appearance: none; /* Standard property */
-        -webkit-appearance: none; /* Safari */
-        -moz-appearance: none; /* Firefox */
-        -ms-appearance: none; /* Internet Explorer */
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
     }
 </style>
