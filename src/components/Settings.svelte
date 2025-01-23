@@ -55,6 +55,12 @@
         localStorage.setItem('isAccountProtected', prefs.isAccountProtected.toString());
     };
 
+    let previousPreferences = $state<Preferences>({
+        level: initialLevel,
+        language: initialLanguage,
+        isAccountProtected: initialProtected,
+    });
+
     const updatePreferences = async (updates: Partial<Preferences>) => {
         const newPreferences = { level: userLevel, language: inputLanguage, isAccountProtected, ...updates };
         savePreferences(newPreferences);
@@ -63,7 +69,30 @@
         const newItems = await fetchAlmanaxData(newPreferences.level, newPreferences.language);
         const boostedItems = applyXPBoost(newItems);
         onLevelUpdate(boostedItems, newPreferences.level);
+
+        // Send only the changed values to Umami
+        if (browser && typeof window.umami !== 'undefined') {
+            const changedValues: Partial<Preferences> = {};
+
+            if (newPreferences.level !== previousPreferences.level) {
+                changedValues.level = newPreferences.level;
+            }
+            if (newPreferences.language !== previousPreferences.language) {
+                changedValues.language = newPreferences.language;
+            }
+            if (newPreferences.isAccountProtected !== previousPreferences.isAccountProtected) {
+                changedValues.isAccountProtected = newPreferences.isAccountProtected;
+            }
+
+            if (Object.keys(changedValues).length > 0) {
+                window.umami.track('update-preferences', changedValues);
+            }
+
+            // Update previousPreferences to the new values
+            previousPreferences = { ...newPreferences };
+        }
     };
+
 
     const applyXPBoost = (items: AlmanaxState[]): AlmanaxState[] => {
         return items.map(item => ({

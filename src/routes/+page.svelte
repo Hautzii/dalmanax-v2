@@ -8,7 +8,7 @@
 	import { fly } from 'svelte/transition';
 	import '../app.postcss';
 	import type { AlmanaxState } from '$lib/types/AlmanaxState';
-	import { initAnalytics } from '$lib/analytics';
+	import { PUBLIC_DATA_WEBSITE_ID } from '$env/static/public';
 
 	const { data } = $props<{ data: { items: AlmanaxState[] } }>();
 	let items = $state(data.items);
@@ -23,7 +23,11 @@
 				userLevel = parseInt(storedLevel);
 			}
 		}
-		initAnalytics();
+		const script = document.createElement('script');
+		script.defer = true;
+		script.src = '/script.js';
+		script.setAttribute('data-website-id', PUBLIC_DATA_WEBSITE_ID);
+		document.head.appendChild(script);
 		mounted = true;
 	});
 </script>
