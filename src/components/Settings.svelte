@@ -159,7 +159,7 @@
         on:click|stopPropagation
         >
         <div 
-            class="modal-content flex flex-col items-center bg-[#1e1e1e] rounded-lg p-6 w-[80vw] max-h-[90vh] fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+            class="modal-content flex flex-col items-center bg-[#1e1e1e] rounded-lg p-6 w-[80vw] max-h-[90vh] md:w-[30vw] fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
             on:click|stopPropagation
             >
                 <h2 class="text-2xl font-semibold text-center pb-4 text-white">{settings()}</h2>
