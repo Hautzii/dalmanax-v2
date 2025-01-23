@@ -118,6 +118,14 @@
         await updatePreferences({ isAccountProtected: protectedStatus });
     };
 
+    $effect(() => {
+        if (showModal) {
+            document.body.classList.add('no-scroll');
+        } else {
+            document.body.classList.remove('no-scroll');
+        }
+    });
+
     onMount(async () => {
         if (browser) {
             const storedLevel = parseInt(localStorage.getItem('level') || '150');
@@ -134,27 +142,46 @@
     });
 </script>
 
+
 <div>
     <!-- svelte-ignore event_directive_deprecated -->
     <button on:click={() => showModal = true} class="settings-button">
-        <img src="/settings.svg" alt="Settings" class="w-6 h-6 settings-icon">
+        <img src="/settings.svg" alt="Settings" class="w-6 h-6 settings-icon transition-transform duration-500 ease-in-out hover:rotate-360 md:mt-0">
     </button>
 
     {#if showModal}
         <!-- svelte-ignore a11y_click_events_have_key_events -->
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <!-- svelte-ignore event_directive_deprecated -->
-        <div class="modal z-[1500]" transition:fade={{ duration: 200 }} on:click|stopPropagation>
-            <div class="modal-content flex flex-col items-center" on:click|stopPropagation>
+        <div 
+        class="fixed inset-0 z-[1500] bg-black/50 py-5 overflow-y-auto flex items-center justify-center"
+        transition:fade={{ duration: 200 }} 
+        on:click|stopPropagation
+        >
+        <div 
+            class="modal-content flex flex-col items-center bg-[#1e1e1e] rounded-lg p-6 w-[80vw] max-h-[90vh] fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+            on:click|stopPropagation
+            >
                 <h2 class="text-2xl font-semibold text-center pb-4 text-white">{settings()}</h2>
                 <div class="w-full max-w-xs space-y-4">
                     <div class="flex flex-col gap-2">
                         <label for="level" class="text-white text-center">{level()}:</label>
-                        <input type="number" id="level" min="1" max="200" bind:value={inputLevel} class="w-full p-2 text-black rounded-md text-center" />    
+                        <input 
+                            type="number" 
+                            id="level" 
+                            min="1" 
+                            max="200" 
+                            bind:value={inputLevel} 
+                            class="w-full p-2 text-black rounded-md text-center [-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none" 
+                        />    
                     </div>
                     <div class="flex flex-col gap-2">
                         <label for="language" class="text-white text-center">{language()}:</label>
-                        <select id="language" bind:value={inputLanguage} class="w-full p-2 text-black rounded-md text-center pl-[1.15rem]">
+                        <select 
+                            id="language" 
+                            bind:value={inputLanguage} 
+                            class="w-full p-2 text-black rounded-md text-center pl-[1.15rem]"
+                        >
                             {#each VALID_LANGUAGES as lang}
                                 <option value={lang}>{formatLanguage(lang)}</option>
                             {/each}
@@ -172,12 +199,22 @@
                     </div>
                 </div>
                 <div class="flex gap-4 mt-6">
-                    <button on:click={async () => { 
-                        await updateLevel(inputLevel); 
-                        await updateLanguage(inputLanguage); 
-                        showModal = false; 
-                    }} class="px-4 py-2 bg-white text-black rounded-md hover:bg-gray-100 transition-colors">OK</button>
-                    <button on:click={() => showModal = false} class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors">{close()}</button>
+                    <button 
+                        on:click={async () => { 
+                            await updateLevel(inputLevel); 
+                            await updateLanguage(inputLanguage); 
+                            showModal = false; 
+                        }} 
+                        class="px-4 py-2 bg-white text-black rounded-md hover:bg-gray-100 transition-colors"
+                    >
+                        OK
+                    </button>
+                    <button 
+                        on:click={() => showModal = false} 
+                        class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                    >
+                        {close()}
+                    </button>
                 </div>
             </div>
         </div>
@@ -185,42 +222,10 @@
 </div>
 
 <style>
-    .modal {
+    :global(.no-scroll) {
+        overflow: hidden;
         position: fixed;
-        top: 0;
-        left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .modal-content {
-        background: #1e1e1e;
-        padding: 24px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        width: 90%;
-        max-width: 400px;
-    }
-    .settings-icon {
-        transition: transform 0.5s ease-in-out;
-        transform:rotate(0deg)
-    }
-    .settings-icon:hover {
-        transition: transform 0.5s ease-in-out;
-        transform:rotate(360deg)
-    }
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-    input[type=number] {
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: textfield;
-        text-align: center;
     }
 </style>
