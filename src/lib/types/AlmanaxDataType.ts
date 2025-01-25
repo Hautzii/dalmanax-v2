@@ -1,14 +1,4 @@
-export interface Dofus2Data {
-    tribute?: {
-        item?: {
-            image_urls?: {
-                hd?: string;
-            };
-        };
-    };
-}
-
-export interface Dofus3Data {
+export type Dofus3Data = {
     bonus: {
         type: {
             name: string;
