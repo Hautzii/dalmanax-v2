@@ -15,5 +15,7 @@
     "settings": "Einstellungen",
     "language": "Sprache",
     "protected_account": "Konto geschlossen",
-    "close": "Schliessen"
+    "close": "Schliessen",
+    "answer1": "Heutiges Almanax ist ",
+    "answer2": " und er gibt dir "
 }

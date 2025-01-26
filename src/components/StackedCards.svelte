@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { AlmanaxState } from '$lib/types/AlmanaxState';
-	import { loot, rewards, today, tomorrow, in2d, in3d, in4d, in5d, in6d, in7d } from '$lib/paraglide/messages';
+	import { loot, rewards, today, tomorrow, in2d, in3d, in4d, in5d, in6d, in7d, answer1, answer2 } from '$lib/paraglide/messages';
 	import { languageTag } from '$lib/paraglide/runtime';
 	import { onMount } from 'svelte';
 	import Toast from './Toast.svelte';
@@ -15,6 +15,7 @@
 	let windowWidth = $state(window.innerWidth);
 	let imagesLoaded = $state(new Set());
 	let dateLabels: string[] = $state([]);
+	let todayItem = items[0];
 
 	type TranslatedItem = AlmanaxState & { loot_text: string; rewards_text: string };
 	let translatedItems: TranslatedItem[] = $state([]);
@@ -170,7 +171,6 @@
 		return () => window.removeEventListener('resize', handleResize);
 	});
 </script>
-
 <!-- svelte-ignore event_directive_deprecated -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -182,9 +182,12 @@
 	on:touchcancel={handleTouchEnd}
 	on:wheel={handleWheel}
 >
+	<h2 class="visually-hidden">Almanax</h2>
+	<p class="visually-hidden">{answer1()} {todayItem.quantity}x {todayItem.loot}, {answer2()} {todayItem.reward_kamas} kamas.</p>
 	{#each translatedItems as item, index}
 		{#if getVisibleCards(index, currentIndex)}
 			{@const displayIndex = getDisplayIndex(index)}
+			{@const isLongDescription = item.description.length > 200}
 			<div
 				on:click={(e) => handleClick(e, index)}
 				data-index={index}
@@ -214,10 +217,10 @@
 							{#if displayIndex !== 0}
 								<div class="text-center text-lg font-semibold transition-opacity duration-200 md:text-left" style:opacity={displayIndex !== 0 ? 1 : 0}>
 									<p style="display: inline; margin-right: 8px;">{formatDate(item.date)}</p>
-									<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
+									<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold bg-[#f15a22]">
 										{dateLabels[index]}
 									</span>
-									<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
+									<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold bg-[#acb739]">
 										{item.bonus}
 									</span>
 								</div>
@@ -230,23 +233,23 @@
 								{#if displayIndex === 0}
 									<p class="text-center text-lg font-semibold md:flex md:items-center md:text-left">
 										{formatDate(item.date)}
-										<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
+										<span class="date-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold bg-[#f15a22]">
 											{dateLabels[index]}
 										</span>
-										<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold">
+										<span class="bonus-label ml-2 rounded-xl px-2 py-1 text-xs font-semibold bg-[#acb739]">
 											{item.bonus}
 										</span>
 									</p>
 								{/if}
 									<p
-										class="description line-clamp-6 text-center text-sm font-semibold transition-opacity duration-200 md:text-left md:text-base"
+										class={`description text-center text-sm font-semibold transition-opacity duration-200 md:text-left md:text-base ${isLongDescription ? 'small' : ''}`}
 										style:opacity={displayIndex === 0 ? 1 : 0}
 									>
 										{item.description}
 									</p>
-									<div class="text-center text-sm md:text-left md:text-base">
+									<div class={`text-center text-sm md:text-left md:text-base ${isLongDescription ? 'small' : ''}`}>
 										{item.loot_text}:
-										<span class="font-semibold">{item.quantity}x</span>
+										<span class={`font-semibold ${isLongDescription ? 'small' : ''}`}>{item.quantity}x</span>
 										<button
 											class="cursor-pointer font-semibold transition-colors hover:text-[#f15a22]"
 											on:click|stopPropagation={() => copyToClipboard(item.loot)}
@@ -254,12 +257,12 @@
 											{item.loot}
 										</button>
 									</div>
-									<div class="text-center text-sm font-semibold md:text-left md:text-base">
+									<div class={`text-center text-sm font-semibold md:text-left md:text-base ${isLongDescription ? 'small' : ''}`}>
 										<p>
 											{item.rewards_text}:
-											<span class="font-semibold">{formatNumberWithSpaces(item.reward_kamas)}</span>
+											<span class={`font-semibold ${isLongDescription ? 'small' : ''}`}>{formatNumberWithSpaces(item.reward_kamas)}</span>
 											<img src="/kamas.webp" alt="Kamas" class="kamas -mb-1 inline-block h-4 w-4 md:mb-1" />
-											<span class="font-semibold">/ {formatNumberWithSpaces(item.reward_xp)} XP</span>
+											<span class={`font-semibold ${isLongDescription ? 'small' : ''}`}>/ {formatNumberWithSpaces(item.reward_xp)} XP</span>
 										</p>
 									</div>
 								</div>
@@ -285,12 +288,22 @@
 {/if}
 
 <style>
-	.date-label {
-		background-color: #f15a22;
+	.visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+	.small {
+		font-size: 0.9em;
 	}
-	.bonus-label {
-		background-color: #acb739;
-	}
+
 	@media screen and (max-width: 768px) {
 		.cards-container {
 			height: 275px;
@@ -302,6 +315,10 @@
 			line-clamp: 3;
 			font-size: 0.875rem;
 			line-height: 1.25rem;
+		}
+		.small {
+			line-height: 1rem;
+			font-size: 0.65rem;
 		}
 		img {
 			height: 76px;

@@ -15,5 +15,7 @@
     "settings": "Settings",
     "language": "Language",
     "protected_account": "Protected Account",
-    "close": "Close"
+    "close": "Close",
+    "answer1": "Today's almanax is ",
+    "answer2": " which grants you "
 }

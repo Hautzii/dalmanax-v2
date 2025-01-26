@@ -5,10 +5,10 @@
 		<link rel="icon" href="%sveltekit.assets%/favicon.ico" />
 		<link rel="canonical" href="https://www.dalmanax.com" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-		<meta name="description" content="Dalmanax - Votre compagnon quotidien. Obtenez gratuitement les bonus journaliers, les quêtes et les informations sur les ressources. Simple, rapide et toujours à jour."/>
+		<meta name="description" content="Obtenez l'almanax du jour, de la semaine, les récompenses en kamas et en XP."/>
 		<meta name="keywords" content="dofus, almanax, bonus quotidiens, mmorpg, calendrier de jeu, dofus almanax, almanax dofus, almanax du jour" />
 		<meta property="og:title" content="Dalmanax" />
-		<meta property="og:description" content="Votre compagnon quotidien. Obtenez gratuitement les bonus journaliers, les quêtes et les informations sur les ressources." />
+		<meta property="og:description" content="Obtenez l'almanax du jour, de la semaine, les récompenses en kamas et en XP." />
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content="https://dalmanax.com" />
 		<meta property="og:image" content="%sveltekit.assets%/og-image.png" />
@@ -16,7 +16,7 @@
 		<meta property="og:locale:alternate" content="en_US" />
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content="Dalmanax - Compagnon Quotidien Almanax Dofus" />
-		<meta name="twitter:description" content="Votre compagnon quotidien. Obtenez gratuitement les bonus journaliers, les quêtes et les informations sur les ressources." />
+		<meta name="twitter:description" content="Obtenez l'almanax du jour, de la semaine, les récompenses en kamas et en XP." />
 		<meta name="twitter:image" content="%sveltekit.assets%/og-image.png" />
 		<meta name="theme-color" content="#10100e" />
 		<meta name="mobile-web-app-capable" content="yes" />
@@ -28,19 +28,16 @@
 		<script type="application/ld+json">
 			{
 				"@context": "https://schema.org",
-				"@type": "WebApplication",
-				"name": "Dalmanax",
-				"description": "Votre compagnon quotidien. Obtenez gratuitement les bonus journaliers, les quêtes et les informations sur les ressources.",
-				"url": "https://dalmanax.com",
-				"applicationCategory": "GameApplication",
-				"operatingSystem": "Any",
-				"offers": {
-					"@type": "Offer",
-					"price": "0",
-					"priceCurrency": "EUR"
-				},
-				"inLanguage": ["fr", "en", "es", "de"]
-			}
+				"@type": "FAQPage",
+				"mainEntity": [{
+				  "@type": "Question",
+				  "name": "What is the daily offering in Dalmanax?",
+				  "acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Today's offering in Dalmanax is {quantity}x {item}, which grants you {reward_kamas} kamas and {reward_xp} XP."
+				  }
+				}]
+			  }
 		</script>
 		%sveltekit.head%
 	</head>

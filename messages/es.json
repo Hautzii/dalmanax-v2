@@ -15,5 +15,7 @@
     "settings": "Ajustes",
     "language": "Idioma",
     "protected_account": "Cuenta protegida",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "answer1": "El almanaque del dia es ",
+    "answer2": " y te da "
 }

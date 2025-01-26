@@ -66,7 +66,7 @@
         savePreferences(newPreferences);
         preferences.set(newPreferences);
 
-        const newItems = await fetchAlmanaxData(newPreferences.level, newPreferences.language);
+        const newItems = await fetchAlmanaxData(newPreferences.level);
         const boostedItems = applyXPBoost(newItems);
         onLevelUpdate(boostedItems, newPreferences.level);
 
