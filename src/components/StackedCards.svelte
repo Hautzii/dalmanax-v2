@@ -70,7 +70,6 @@
 		}
 	};
 
-	// Handle touch start events
 	const handleTouchStart = (e: TouchEvent): void => {
 		e.preventDefault();
 		touchStartY = e.touches[0].clientY;

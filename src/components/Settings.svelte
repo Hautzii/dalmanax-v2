@@ -2,12 +2,26 @@
     import { onMount } from 'svelte';
     import { fade } from 'svelte/transition';
     import { browser } from '$app/environment';
-    import { level, settings, language, protected_account, close } from '$lib/paraglide/messages';
+    import { level, settings, language, protected_account, close, tooltip } from '$lib/paraglide/messages';
     import { setLanguageTag, languageTag } from '$lib/paraglide/runtime';
     import { preferences } from '$lib/stores/almanaxStore';
     import { fetchAlmanaxData } from '$lib/api/almanax';
     import type { AlmanaxState } from '$lib/types/AlmanaxState';
     import type { Preferences } from '$lib/types/Preferences';
+
+    let tooltipVisible = $state(false);
+    let tooltipTimeout: NodeJS.Timeout;
+
+    const showTooltip = () => {
+        tooltipVisible = true;
+        clearTimeout(tooltipTimeout);
+    };
+
+    const hideTooltip = () => {
+        tooltipTimeout = setTimeout(() => {
+            tooltipVisible = false;
+        }, 100);
+    };
 
     type Language = "en" | "fr" | "es" | "de";
 
@@ -188,7 +202,29 @@
                         </select>
                     </div>
                     <div class="flex items-center justify-center gap-2">
-                        <label for="isAccountProtected" class="text-white">{protected_account()}</label>
+                        <div class="relative">
+                            {#if window.innerWidth < 768}
+                                <button
+                                    class="w-5 h-5 rounded-full bg-gray-600 text-white text-sm flex items-center justify-center cursor-help"
+                                    on:mouseenter={showTooltip}
+                                    on:mouseleave={hideTooltip}
+                                    on:touchstart|preventDefault={showTooltip}
+                                    on:touchend|preventDefault={hideTooltip}
+                                    aria-label="Protected account information"
+                                >
+                                    <img src="/tooltip.svg" alt="tooltip icon">
+                                </button>
+                            {/if}
+                            {#if tooltipVisible}
+                                <div class="absolute z-50 w-64 p-2 text-sm bg-white text-[#1e1e1e] text-center rounded-md shadow-lg -top-[6rem] -left-[2rem] md:-left-[3rem]">
+                                    {tooltip()}
+                                    <div class="tooltip-arrow"></div>
+                                </div>
+                            {/if}
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="dot-underline text-[#ffffe6]" on:mouseenter={showTooltip} on:mouseleave={hideTooltip} on:touchstart|preventDefault={showTooltip} on:touchend|preventDefault={hideTooltip}>{protected_account()}</span>
+                        </div>
                         <input 
                             type="checkbox" 
                             id="isAccountProtected" 
@@ -227,5 +263,26 @@
         position: fixed;
         width: 100%;
         height: 100%;
+    }
+    .tooltip-arrow {
+        position: absolute;
+        bottom: -4px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 6px solid #ffffe6;
+    }
+
+    .dot-underline {
+        text-decoration: underline dotted;
+    }
+
+    @media (hover: none) {
+        .cursor-help {
+            cursor: pointer;
+        }
     }
 </style>

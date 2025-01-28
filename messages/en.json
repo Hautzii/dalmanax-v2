@@ -17,5 +17,6 @@
     "protected_account": "Protected Account",
     "close": "Close",
     "answer1": "Today's almanax is ",
-    "answer2": " which grants you "
+    "answer2": " which grants you ",
+    "tooltip": "Ankama accounts with a verified phone number get a 5% XP boost."
 }

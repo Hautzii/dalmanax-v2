@@ -17,5 +17,6 @@
     "protected_account": "Cuenta protegida",
     "close": "Cerrar",
     "answer1": "El almanaque del dia es ",
-    "answer2": " y te da "
+    "answer2": " y te da ",
+    "tooltip": "Un cuenta con un número de teléfono verificado obtiene un boost de 5% de XP"
 }
