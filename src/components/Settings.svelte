@@ -102,7 +102,6 @@
                 window.umami.track('update-preferences', changedValues);
             }
 
-            // Update previousPreferences to the new values
             previousPreferences = { ...newPreferences };
         }
     };
@@ -156,7 +155,6 @@
     });
 </script>
 
-
 <div>
     <!-- svelte-ignore event_directive_deprecated -->
     <button on:click={() => showModal = true} class="settings-button">
@@ -167,12 +165,12 @@
         <!-- svelte-ignore a11y_click_events_have_key_events -->
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <!-- svelte-ignore event_directive_deprecated -->
-        <div 
+        <div
         class="fixed inset-0 z-[1500] bg-black/50 py-5 overflow-y-auto flex items-center justify-center"
-        transition:fade={{ duration: 200 }} 
+        transition:fade={{ duration: 200 }}
         on:click|stopPropagation
         >
-        <div 
+        <div
             class="modal-content flex flex-col items-center bg-[#1e1e1e] rounded-lg p-6 w-[80vw] max-h-[90vh] md:w-[30vw] fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
             on:click|stopPropagation
             >
@@ -180,20 +178,20 @@
                 <div class="w-full max-w-xs space-y-4">
                     <div class="flex flex-col gap-2">
                         <label for="level" class="text-white text-center">{level()}:</label>
-                        <input 
-                            type="number" 
-                            id="level" 
-                            min="1" 
-                            max="200" 
-                            bind:value={inputLevel} 
+                        <input
+                            type="number"
+                            id="level"
+                            min="1"
+                            max="200"
+                            bind:value={inputLevel}
                             class="w-full p-2 text-black rounded-md text-center [-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none" 
-                        />    
+                        />
                     </div>
                     <div class="flex flex-col gap-2">
                         <label for="language" class="text-white text-center">{language()}:</label>
-                        <select 
-                            id="language" 
-                            bind:value={inputLanguage} 
+                        <select
+                            id="language"
+                            bind:value={inputLanguage}
                             class="w-full p-2 text-black rounded-md text-center pl-[1.15rem]"
                         >
                             {#each VALID_LANGUAGES as lang}
@@ -263,6 +261,13 @@
         position: fixed;
         width: 100%;
         height: 100%;
+    }
+    .settings-icon {
+        transition: all 0.7s ease-in-out;
+    }
+    .settings-icon:hover {
+        rotate: 360deg;
+        transition: all 0.7s ease-in-out;
     }
     .tooltip-arrow {
         position: absolute;
