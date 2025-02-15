@@ -181,8 +181,10 @@
 	on:touchcancel={handleTouchEnd}
 	on:wheel={handleWheel}
 >
-	<h2 class="visually-hidden">Almanax</h2>
-	<p class="visually-hidden">{answer1()} {todayItem.quantity}x {todayItem.loot}, {answer2()} {todayItem.reward_kamas} kamas.</p>
+	<div class="color-[#10100e]">
+		<h2>Almanax</h2>
+		<p>{answer1()} {todayItem.quantity}x {todayItem.loot}, {answer2()} {todayItem.reward_kamas} kamas.</p>
+	</div>
 	{#each translatedItems as item, index}
 		{#if getVisibleCards(index, currentIndex)}
 			{@const displayIndex = getDisplayIndex(index)}
@@ -287,18 +289,6 @@
 {/if}
 
 <style>
-	.visually-hidden {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-    }
-
 	.small {
 		font-size: 0.9em;
 	}
